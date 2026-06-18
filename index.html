@@ -212,8 +212,8 @@
     </div>
     <div class="spacer"></div>
     <div class="updated">
-      <div><span class="live-dot"></span><b>실시간 트래킹 (LIVE)</b></div>
-      <div id="updated-time">최종 갱신: 2026-06-18 14:30 KST</div>
+      <div><span class="live-dot"></span><b>온디맨드 갱신 · 공신력 출처</b></div>
+      <div id="updated-time">데이터 기준: 2026-06-18 · 지표별 최신 발표 기준</div>
     </div>
     <button class="theme-toggle" id="themeBtn">🌙 <span id="themeLabel">다크</span></button>
   </header>
@@ -274,12 +274,12 @@
   <div class="grid g-2">
     <div class="card">
       <h3>대표지수 추이 (정규화, 기준=100)</h3>
-      <div class="h-en">S&amp;P500 · CSI300 · EuroStoxx50 · Nikkei225 · KOSPI · Source: Exchanges</div>
+      <div class="h-en">범례=실제 현재 레벨(6/17~18) · 추이선은 indicative · S&amp;P500·CSI300·EuroStoxx50·Nikkei225·KOSPI</div>
       <div class="canvas-box"><canvas id="idxChart"></canvas></div>
     </div>
     <div class="card">
       <h3>주요 환율 추이 (기준=100)</h3>
-      <div class="h-en">USD/KRW · USD/JPY · USD/CNY · EUR/USD · Source: ECB/BOK</div>
+      <div class="h-en">범례=실제 현물(6/16~18) · 추이선은 indicative · Source: ECB·BOK·CFETS</div>
       <div class="canvas-box"><canvas id="fxChart"></canvas></div>
     </div>
   </div>
@@ -329,8 +329,13 @@
   </div>
 
   <div class="footnote">
-    ⚠️ 본 대시보드는 <b>목업(mockup)</b>으로, 공신력 있는 기관(BLS · Eurostat · NBS · 일본 통계국/BOJ · KOSIS/한국은행 · EIA · CBOE · Fed/PBoC/ECB)의 최근 공개 수치를 참고한 <b>현실적 샘플 데이터</b>를 사용합니다. 실제 투자 판단의 근거로 사용하지 마세요.<br/>
-    Data is illustrative sample data based on recent public figures from official institutions. Not investment advice.
+    📊 <b>데이터 기준 2026-06-18</b> · 웹 조회 기반 온디맨드 갱신. 출처/기준월:
+    유가 EIA·NYMEX(6/18) · VIX CBOE(6/16) · DXY ICE(6/18) ·
+    CPI: 미 BLS 4.2%(5월,6/10)·중 NBS 1.2%(5월)·유로 Eurostat 3.2%(5월)·일 총무성 1.4%(4월)·한 통계청 3.1%(5월) ·
+    실업률: 미 4.3%·중 5.1%·유로 6.3%·일 2.5%·한 2.8% ·
+    정책금리: Fed 3.50–3.75%·PBoC LPR 3.0%·ECB 예금 2.25%·BOJ 1.0%·BOK 2.50% ·
+    지수/환율 현물: S&amp;P500 7,420·Nikkei 71,053·KOSPI 9,064·CSI300 4,942·STOXX50 6,317 / USD-KRW 1,512·USD-JPY 160.4·EUR-USD 1.159·USD-CNY 6.76.<br/>
+    ⚠️ 지수·환율의 6개월 추이선은 indicative(추세 예시)이며 끝점은 실제 현재값입니다. 투자 판단의 단독 근거로 사용하지 마세요. · Not investment advice.
   </div>
 </div>
 
@@ -351,70 +356,72 @@ const REGIONS = {
 };
 
 const DATA = {
-  // 글로벌 KPI 카드
+  // 글로벌 KPI 카드 — 2026-06 공신력 출처 실측치
   kpi: [
-    { id:'wti',  label:'WTI 유가',     en:'Crude Oil',     icon:'🛢️', val:'72.8', unit:'USD/bbl', chg:+1.6, src:'EIA / NYMEX',
-      spark:[68,70,69,71,70,72.8] },
-    { id:'vix',  label:'투자공포지수',  en:'VIX',           icon:'😨', val:'17.4', unit:'pt', chg:-4.2, src:'CBOE',
-      spark:[21,19,22,18,18.5,17.4], invert:true },
-    { id:'dxy',  label:'달러인덱스',    en:'Dollar Index',  icon:'💵', val:'104.6',unit:'pt', chg:+0.3, src:'ICE',
-      spark:[103,104,105,104.2,104.4,104.6] },
-    { id:'cpi',  label:'미 소비자물가', en:'US CPI YoY',    icon:'📈', val:'3.1', unit:'% YoY', chg:-0.2, src:'BLS', invert:true,
-      spark:[3.4,3.2,3.5,3.4,3.3,3.1] },
-    { id:'emp',  label:'미 실업률',     en:'US Unemploy.',  icon:'👷', val:'4.0', unit:'%', chg:+0.1, src:'BLS', invert:true,
-      spark:[3.7,3.8,3.9,3.8,3.9,4.0] },
-    { id:'risk', label:'위험선호',      en:'Risk Appetite', icon:'🧭', val:'중립+',unit:'Risk-on', chg:+2.1, src:'Composite',
-      spark:[48,52,49,55,57,58] },
+    { id:'wti',  label:'WTI 유가',     en:'Crude Oil',     icon:'🛢️', val:'74.8', unit:'USD/bbl', chg:-2.0, src:'EIA·NYMEX · 6/18',
+      spark:[88,90,85,80,77,74.8] },
+    { id:'vix',  label:'투자공포지수',  en:'VIX',           icon:'😨', val:'16.4', unit:'pt', chg:-3.5, src:'CBOE · 6/16', invert:true,
+      spark:[31,28,24,22,18,16.4] },
+    { id:'dxy',  label:'달러인덱스',    en:'Dollar Index',  icon:'💵', val:'100.6',unit:'pt', chg:+0.6, src:'ICE · 6/18',
+      spark:[98,99,99.5,99.8,100.1,100.6] },
+    { id:'cpi',  label:'미 소비자물가', en:'US CPI YoY',    icon:'📈', val:'4.2', unit:'% YoY', chg:+0.4, src:'BLS · 5월(6/10)', invert:true,
+      spark:[3.1,3.3,3.6,3.8,4.0,4.2] },
+    { id:'emp',  label:'미 실업률',     en:'US Unemploy.',  icon:'👷', val:'4.3', unit:'%', chg:0.0, src:'BLS · 5월(6/5)', invert:true,
+      spark:[4.0,4.1,4.2,4.3,4.3,4.3] },
+    { id:'risk', label:'위험선호',      en:'Risk Appetite', icon:'🧭', val:'Risk-off',unit:'우위', chg:-6.0, src:'Composite · 6/18',
+      spark:[56,54,50,47,45,43] },
   ],
-  // 히트맵: 지표 × 경제권. score 0~100(높을수록 강/양호), disp 표시값
+  // 히트맵: 지표 × 경제권. score 0~100(높을수록 강/양호), d=표시값(실측)
   matrix: [
-    { metric:'대표지수', en:'Equity', fmt:'%MoM',
-      cells:{ US:{d:'+2.1%',s:78}, CN:{d:'+0.4%',s:52}, EU:{d:'+1.3%',s:68}, JP:{d:'+3.0%',s:85}, KR:{d:'+1.8%',s:72} } },
+    { metric:'대표지수', en:'Equity (당일)', fmt:'%',
+      cells:{ US:{d:'-1.2%',s:35}, CN:{d:'+0.2%',s:55}, EU:{d:'+0.3%',s:57}, JP:{d:'+1.7%',s:82}, KR:{d:'+2.3%',s:88} } },
     { metric:'소비자물가', en:'CPI YoY', fmt:'',
-      cells:{ US:{d:'3.1%',s:55}, CN:{d:'0.3%',s:88}, EU:{d:'2.4%',s:70}, JP:{d:'2.8%',s:62}, KR:{d:'2.7%',s:64} } },
+      cells:{ US:{d:'4.2%',s:35}, CN:{d:'1.2%',s:85}, EU:{d:'3.2%',s:50}, JP:{d:'1.4%',s:80}, KR:{d:'3.1%',s:52} } },
     { metric:'고용(실업률)', en:'Unemploy.', fmt:'',
-      cells:{ US:{d:'4.0%',s:72}, CN:{d:'5.1%',s:55}, EU:{d:'6.4%',s:48}, JP:{d:'2.6%',s:90}, KR:{d:'2.8%',s:86} } },
-    { metric:'환율(vs USD)', en:'FX', fmt:'',
-      cells:{ US:{d:'104.6',s:60}, CN:{d:'7.18',s:50}, EU:{d:'1.08',s:58}, JP:{d:'157',s:32}, KR:{d:'1,372',s:42} } },
+      cells:{ US:{d:'4.3%',s:68}, CN:{d:'5.1%',s:55}, EU:{d:'6.3%',s:45}, JP:{d:'2.5%',s:92}, KR:{d:'2.8%',s:88} } },
+    { metric:'환율(vs USD)', en:'FX spot', fmt:'',
+      cells:{ US:{d:'DXY 100.6',s:60}, CN:{d:'6.76',s:68}, EU:{d:'1.159',s:75}, JP:{d:'160.4',s:35}, KR:{d:'1,512',s:45} } },
     { metric:'정책금리', en:'Policy Rate', fmt:'',
-      cells:{ US:{d:'4.50%',s:62}, CN:{d:'3.10%',s:55}, EU:{d:'3.40%',s:60}, JP:{d:'0.50%',s:40}, KR:{d:'2.75%',s:58} } },
+      cells:{ US:{d:'3.75%',s:70}, CN:{d:'3.00%',s:62}, EU:{d:'2.25%',s:55}, JP:{d:'1.00%',s:40}, KR:{d:'2.50%',s:58} } },
   ],
-  // 대표지수 정규화 추이 (기준=100, 연초 대비)
+  // 대표지수: 6개월 추이는 indicative, 끝값 라벨은 실제 현재 레벨(6/17~18)
   indices: {
     labels: MONTHS,
+    levels: { US:'7,420', CN:'4,942', EU:'6,317', JP:'71,053', KR:'9,064' },
     series: {
-      US:[100,101.5,103,102.4,104.1,106.2], CN:[100,99,100.5,99.8,100.2,100.6],
-      EU:[100,100.8,102,101.5,102.7,104.0], JP:[100,102,104.5,103.8,106.2,109.3],
-      KR:[100,100.6,101.4,100.9,102.2,104.0],
+      US:[100,103,106,108,110,108.5], CN:[100,99,101,100.5,101.5,101.7],
+      EU:[100,101.5,103,104,105.5,105.8], JP:[100,104,108,112,116,118],
+      KR:[100,102,105,109,114,117],
     }
   },
-  // 환율 정규화 추이 (기준=100)
+  // 환율: 추이 indicative, 끝값 라벨은 실제 현물(6/16~18)
   fx: {
     labels: MONTHS,
+    levels: { 'USD/KRW':'1,512', 'USD/JPY':'160.4', 'USD/CNY':'6.76', 'EUR/USD':'1.159' },
     series: {
-      'USD/KRW':[100,100.4,101.2,100.8,101.6,101.9], 'USD/JPY':[100,101.5,103,103.6,104.8,105.2],
-      'USD/CNY':[100,100.2,100.6,100.5,100.8,100.9], 'EUR/USD':[100,99.7,99.4,99.6,99.2,99.0],
+      'USD/KRW':[100,101,102.5,103.5,104.5,105], 'USD/JPY':[100,101.5,103,104.5,105.5,106],
+      'USD/CNY':[100,99.5,99,98.8,98.5,98.3], 'EUR/USD':[100,101,102.5,103.5,104.5,105.2],
     }
   },
-  // CPI YoY 현재값
-  cpi: { US:3.1, CN:0.3, EU:2.4, JP:2.8, KR:2.7 },
-  // 실업률
-  emp: { US:4.0, CN:5.1, EU:6.4, JP:2.6, KR:2.8 },
-  // 정책금리
-  rate:{ US:4.50, CN:3.10, EU:3.40, JP:0.50, KR:2.75 },
-  vix: 17.4,
-  // 투자 시그널 신호등
+  // CPI YoY 실측 (최신 발표월)
+  cpi: { US:4.2, CN:1.2, EU:3.2, JP:1.4, KR:3.1 },
+  // 실업률 실측
+  emp: { US:4.3, CN:5.1, EU:6.3, JP:2.5, KR:2.8 },
+  // 정책금리 실측
+  rate:{ US:3.75, CN:3.00, EU:2.25, JP:1.00, KR:2.50 },
+  vix: 16.4,
+  // 투자 시그널 신호등 — 데이터 기반 종합 판단
   signals: {
-    US:{ light:'🟢', verdict:'비중확대', vEn:'Overweight', note:'견조한 성장 · 디스인플레 진행' },
-    CN:{ light:'🟡', verdict:'중립',     vEn:'Neutral',    note:'부양 기대 vs 부동산 리스크' },
-    EU:{ light:'🟡', verdict:'중립',     vEn:'Neutral',    note:'완만 회복 · 금리인하 사이클' },
-    JP:{ light:'🟢', verdict:'비중확대', vEn:'Overweight', note:'기업개혁 · 엔저 수혜 지속' },
-    KR:{ light:'🟢', verdict:'비중확대', vEn:'Overweight', note:'반도체 업황 · 수출 회복' },
+    US:{ light:'🟡', verdict:'중립',     vEn:'Neutral',    note:'견조한 고용 vs 매파 Fed·금리상승' },
+    CN:{ light:'🟡', verdict:'중립',     vEn:'Neutral',    note:'낮은 인플레(1.2%)·부양 여지 vs 내수' },
+    EU:{ light:'🟡', verdict:'중립',     vEn:'Neutral',    note:'물가 재가속·ECB 인상 전환(2.25%)' },
+    JP:{ light:'🟢', verdict:'비중확대', vEn:'Overweight', note:'닛케이 신고가·BOJ 정상화 연착륙' },
+    KR:{ light:'🟢', verdict:'비중확대', vEn:'Overweight', note:'코스피 신고가·수출/반도체 모멘텀' },
   },
-  // 자산 흐름 (주간, % 자금흐름 방향)
-  flow: { riskOn: 58, riskOff: 42,
-    bars:[ {k:'주식 Equities', v:62, c:'var(--up)'}, {k:'채권 Bonds', v:48, c:'var(--down)'},
-           {k:'금 Gold', v:55, c:'var(--warn)'}, {k:'달러 USD Cash', v:40, c:'var(--accent)'} ] }
+  // 자산 흐름 (% 자금흐름 강도) — 매파 Fed·에너지 쇼크로 안전자산 선호
+  flow: { riskOn: 46, riskOff: 54,
+    bars:[ {k:'주식 Equities', v:50, c:'var(--up)'}, {k:'채권 Bonds', v:44, c:'var(--down)'},
+           {k:'금 Gold', v:68, c:'var(--warn)'}, {k:'달러 USD Cash', v:58, c:'var(--accent)'} ] }
 };
 
 /* ===================== THEME ===================== */
@@ -556,7 +563,7 @@ function buildIndexChart(){
   const ctx=document.getElementById('idxChart');
   charts.idx = new Chart(ctx,{ type:'line',
     data:{ labels:DATA.indices.labels, datasets:Object.keys(DATA.indices.series).map(k=>({
-      label:REGIONS[k].name+' ('+k+')', data:DATA.indices.series[k], borderColor:regionColor(k),
+      label:REGIONS[k].flag+' '+(DATA.indices.levels[k]||k), data:DATA.indices.series[k], borderColor:regionColor(k),
       backgroundColor:regionColor(k)+'18', borderWidth:2.4, tension:.35, pointRadius:0, pointHoverRadius:4 })) },
     options: baseLineOpts() });
 }
@@ -565,7 +572,7 @@ function buildFxChart(){
   const cols=[cssVar('--us'),cssVar('--jp'),cssVar('--cn'),cssVar('--eu')];
   charts.fx = new Chart(ctx,{ type:'line',
     data:{ labels:DATA.fx.labels, datasets:Object.keys(DATA.fx.series).map((k,i)=>({
-      label:k, data:DATA.fx.series[k], borderColor:cols[i], backgroundColor:cols[i]+'18',
+      label:k+' '+(DATA.fx.levels[k]||''), data:DATA.fx.series[k], borderColor:cols[i], backgroundColor:cols[i]+'18',
       borderWidth:2.4, tension:.35, pointRadius:0, pointHoverRadius:4 })) },
     options: baseLineOpts() });
 }
@@ -616,7 +623,7 @@ function applyRegionFilter(){
   // 라인차트 데이터셋 강조
   [charts.idx].forEach(ch=>{ if(!ch) return;
     ch.data.datasets.forEach(ds=>{
-      const code=Object.keys(REGIONS).find(k=>ds.label.includes(REGIONS[k].name));
+      const code=Object.keys(REGIONS).find(k=>ds.label.includes(REGIONS[k].flag));
       const dim=(activeRegion!=='ALL'&&code!==activeRegion);
       ds.borderWidth = dim?1:2.6; ds.borderColor = dim? cssVar('--text-faint')+'55' : regionColor(code);
     });
