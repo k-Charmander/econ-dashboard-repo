@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Global Macro Tracker · 세계 경제 대시보드</title>
+<script src="./assets/chart.umd.min.js"></script>
+<!-- 네트워크 차단 시 CDN 폴백 (로컬 vendored 파일이 우선) -->
+<script>
+  if (typeof Chart === 'undefined') {
+    document.write('<scr' + 'ipt src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></scr' + 'ipt>');
+  }
+</script>
+<style>
+  :root {
+    --bg: #f4f6fb;
+    --bg-grad-1: #eef2fb;
+    --bg-grad-2: #f7f8fc;
+    --panel: #ffffff;
+    --panel-2: #fbfcff;
+    --border: #e3e8f2;
+    --text: #1a2233;
+    --text-dim: #5a6478;
+    --text-faint: #8b93a7;
+    --accent: #2f6bff;
+    --accent-soft: rgba(47,107,255,0.10);
+    --up: #e5484d;     /* 한국식: 상승 = 빨강 */
+    --down: #1f8f5f;   /* 한국식: 하락 = 초록 */
+    --warn: #f5a623;
+    --shadow: 0 1px 3px rgba(20,30,60,0.06), 0 6px 22px rgba(20,30,60,0.05);
+    --us:#3b6df0; --cn:#e5484d; --eu:#7b61ff; --jp:#ff8a3d; --kr:#16b07d;
+  }
+  html[data-theme="dark"] {
+    --bg: #0c1018;
+    --bg-grad-1: #0e1320;
+    --bg-grad-2: #0a0d15;
+    --panel: #151b29;
+    --panel-2: #1a2233;
+    --border: #232c3f;
+    --text: #e9eef8;
+    --text-dim: #9aa6bd;
+    --text-faint: #6b768d;
+    --accent: #5b8bff;
+    --accent-soft: rgba(91,139,255,0.14);
+    --up: #ff5d62;
+    --down: #2ecf86;
+    --warn: #ffb13d;
+    --shadow: 0 1px 3px rgba(0,0,0,0.4), 0 10px 30px rgba(0,0,0,0.35);
+    --us:#5b8bff; --cn:#ff5d62; --eu:#9d86ff; --jp:#ffa15c; --kr:#2ecf86;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: "Pretendard", -apple-system, "Segoe UI", "Apple SD Gothic Neo", "Malgun Gothic", system-ui, sans-serif;
+    background: radial-gradient(1200px 600px at 80% -10%, var(--bg-grad-1), var(--bg-grad-2)) fixed, var(--bg);
+    color: var(--text);
+    -webkit-font-smoothing: antialiased;
+    transition: background .3s, color .3s;
+  }
+  .wrap { max-width: 1480px; margin: 0 auto; padding: 22px 28px 56px; }
+
+  /* ===== Header ===== */
+  header.topbar {
+    display: flex; align-items: center; gap: 20px;
+    flex-wrap: wrap;
+    padding: 16px 0 18px;
+  }
+  .brand { display: flex; align-items: center; gap: 14px; }
+  .brand .logo {
+    width: 46px; height: 46px; border-radius: 13px;
+    background: linear-gradient(135deg, var(--accent), #8b5bff);
+    display: grid; place-items: center; color: #fff; font-size: 24px;
+    box-shadow: 0 6px 18px rgba(47,107,255,0.35);
+  }
+  .brand h1 { font-size: 21px; margin: 0; letter-spacing: -0.4px; }
+  .brand .sub { font-size: 12.5px; color: var(--text-dim); margin-top: 2px; }
+  .topbar .spacer { flex: 1; }
+  .updated { font-size: 12px; color: var(--text-faint); text-align: right; line-height: 1.5; }
+  .updated b { color: var(--text-dim); }
+  .live-dot { display:inline-block; width:8px;height:8px;border-radius:50%;background:var(--down);margin-right:5px; box-shadow:0 0 0 0 rgba(46,207,134,.6); animation: pulse 1.8s infinite; }
+  @keyframes pulse { 0%{box-shadow:0 0 0 0 rgba(46,207,134,.5);} 70%{box-shadow:0 0 0 7px rgba(46,207,134,0);} 100%{box-shadow:0 0 0 0 rgba(46,207,134,0);} }
+  .theme-toggle {
+    border: 1px solid var(--border); background: var(--panel);
+    color: var(--text); border-radius: 11px; padding: 9px 13px; cursor: pointer;
+    font-size: 14px; display: flex; align-items: center; gap: 7px; box-shadow: var(--shadow);
+  }
+  .theme-toggle:hover { border-color: var(--accent); }
+
+  /* ===== Region tabs ===== */
+  .tabs { display: flex; gap: 8px; flex-wrap: wrap; margin: 6px 0 22px; }
+  .tab {
+    border: 1px solid var(--border); background: var(--panel);
+    color: var(--text-dim); border-radius: 999px; padding: 8px 16px; cursor: pointer;
+    font-size: 13.5px; font-weight: 600; display: flex; align-items: center; gap: 7px;
+    transition: all .15s; box-shadow: var(--shadow);
+  }
+  .tab .flag { font-size: 15px; }
+  .tab:hover { color: var(--text); transform: translateY(-1px); }
+  .tab.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+
+  /* ===== Section titles ===== */
+  .section-title { display:flex; align-items:baseline; gap:10px; margin: 26px 2px 14px; }
+  .section-title h2 { font-size: 15.5px; margin: 0; letter-spacing: -0.3px; }
+  .section-title .en { font-size: 12px; color: var(--text-faint); font-weight: 500; }
+
+  /* ===== KPI cards ===== */
+  .kpi-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 14px; }
+  .kpi {
+    background: var(--panel); border: 1px solid var(--border); border-radius: 16px;
+    padding: 15px 16px 12px; box-shadow: var(--shadow); position: relative; overflow: hidden;
+    transition: transform .15s, border-color .15s;
+  }
+  .kpi:hover { transform: translateY(-2px); border-color: var(--accent); }
+  .kpi .top { display: flex; align-items: center; justify-content: space-between; }
+  .kpi .label { font-size: 12px; color: var(--text-dim); font-weight: 600; }
+  .kpi .label .en { display:block; font-size:10px; color: var(--text-faint); font-weight:500; margin-top:1px;}
+  .kpi .icon { font-size: 17px; opacity: .8; }
+  .kpi .val { font-size: 25px; font-weight: 750; margin: 9px 0 3px; letter-spacing: -0.5px; }
+  .kpi .chg { font-size: 12.5px; font-weight: 700; display: inline-flex; align-items: center; gap: 3px; }
+  .kpi .unit { font-size: 12px; color: var(--text-faint); font-weight: 500; }
+  .kpi .spark { position:absolute; right:0; bottom:0; left:0; height:34px; opacity:.85; }
+  .kpi .src { font-size: 9.5px; color: var(--text-faint); margin-top: 14px; position: relative; z-index: 1; }
+  .up { color: var(--up); } .down { color: var(--down); }
+
+  /* ===== Layout grid ===== */
+  .grid { display: grid; gap: 16px; }
+  .g-2 { grid-template-columns: 1.55fr 1fr; }
+  .g-3 { grid-template-columns: repeat(3, 1fr); }
+  .card {
+    background: var(--panel); border: 1px solid var(--border); border-radius: 16px;
+    padding: 17px 18px; box-shadow: var(--shadow);
+  }
+  .card h3 { font-size: 14px; margin: 0 0 2px; letter-spacing:-0.2px; }
+  .card .h-en { font-size: 11px; color: var(--text-faint); font-weight: 500; margin-bottom: 12px; }
+  .card .canvas-box { position: relative; height: 240px; }
+  .card .canvas-box.sm { height: 200px; }
+
+  /* ===== Heatmap matrix ===== */
+  .matrix { width: 100%; border-collapse: separate; border-spacing: 6px; }
+  .matrix th { font-size: 11.5px; color: var(--text-dim); font-weight: 600; padding: 4px; text-align: center; }
+  .matrix th.row-h { text-align: left; }
+  .matrix td.row-h { font-size: 12.5px; font-weight: 600; text-align: left; white-space: nowrap; padding-right: 6px; }
+  .matrix td.row-h .en { display:block; font-size:10px; color:var(--text-faint); font-weight:500;}
+  .cell {
+    border-radius: 9px; text-align: center; padding: 9px 4px; font-size: 12.5px; font-weight: 700;
+    color: #fff; position: relative; cursor: default;
+  }
+  .cell .sub { display:block; font-size: 9.5px; font-weight: 500; opacity: .9; margin-top:1px;}
+  .flag-h { font-size: 17px; }
+
+  /* ===== Signal infographic ===== */
+  .signal-grid { display: grid; grid-template-columns: repeat(5,1fr); gap: 12px; }
+  .sig {
+    border: 1px solid var(--border); border-radius: 14px; padding: 14px; background: var(--panel-2);
+    text-align: center;
+  }
+  .sig .flag { font-size: 26px; }
+  .sig .name { font-size: 13px; font-weight: 700; margin: 6px 0 2px; }
+  .sig .name .en { display:block; font-size:10px; color:var(--text-faint); font-weight:500;}
+  .sig .light { font-size: 22px; margin: 6px 0 4px; }
+  .sig .verdict { font-size: 11.5px; font-weight: 700; }
+  .sig .note { font-size: 10.5px; color: var(--text-dim); margin-top: 6px; line-height: 1.45; }
+
+  .flow {
+    display:flex; align-items:center; justify-content:space-around; gap: 10px;
+    padding: 6px 4px;
+  }
+  .flow .node { text-align:center; flex:1; }
+  .flow .node .big { font-size: 19px; font-weight: 750; }
+  .flow .node .cap { font-size: 11px; color: var(--text-dim); margin-top:2px;}
+  .flow .arrow { font-size: 26px; color: var(--accent); }
+  .bar-row { margin: 9px 0; }
+  .bar-row .lab { display:flex; justify-content:space-between; font-size: 11.5px; color: var(--text-dim); margin-bottom: 4px; }
+  .bar-row .lab b { color: var(--text); }
+  .track { height: 9px; border-radius: 6px; background: var(--accent-soft); overflow: hidden; }
+  .track > div { height: 100%; border-radius: 6px; }
+
+  /* ===== VIX gauge wrap ===== */
+  .gauge-wrap { position: relative; height: 200px; }
+  .gauge-center { position:absolute; left:0; right:0; top:58%; text-align:center; }
+  .gauge-center .num { font-size: 34px; font-weight: 800; }
+  .gauge-center .stat { font-size: 12px; font-weight: 700; }
+
+  .footnote { font-size: 10.5px; color: var(--text-faint); margin-top: 26px; line-height: 1.6; text-align:center; }
+  .legend-inline { display:flex; gap:14px; flex-wrap:wrap; font-size:11px; color:var(--text-dim); margin-top:8px;}
+  .legend-inline span { display:flex; align-items:center; gap:5px;}
+  .legend-inline i { width:10px;height:10px;border-radius:3px;display:inline-block;}
+
+  @media (max-width: 1180px) {
+    .kpi-grid { grid-template-columns: repeat(3,1fr); }
+    .g-2, .g-3 { grid-template-columns: 1fr; }
+    .signal-grid { grid-template-columns: repeat(5,1fr); }
+  }
+  @media (max-width: 680px) {
+    .kpi-grid { grid-template-columns: repeat(2,1fr); }
+    .signal-grid { grid-template-columns: repeat(2,1fr); }
+  }
+  .dim { color: var(--text-dim); }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- ========== HEADER ========== -->
+  <header class="topbar">
+    <div class="brand">
+      <div class="logo">🌐</div>
+      <div>
+        <h1>Global Macro Tracker</h1>
+        <div class="sub">세계 5대 경제권 실시간 지표 · 자산 흐름 &amp; 투자 전략 대시보드</div>
+      </div>
+    </div>
+    <div class="spacer"></div>
+    <div class="updated">
+      <div><span class="live-dot"></span><b>실시간 트래킹 (LIVE)</b></div>
+      <div id="updated-time">최종 갱신: 2026-06-18 14:30 KST</div>
+    </div>
+    <button class="theme-toggle" id="themeBtn">🌙 <span id="themeLabel">다크</span></button>
+  </header>
+
+  <!-- ========== REGION TABS ========== -->
+  <div class="tabs" id="tabs">
+    <button class="tab active" data-region="ALL">🌍 전체 <span class="dim">All</span></button>
+    <button class="tab" data-region="US"><span class="flag">🇺🇸</span> 미국 <span class="dim">US</span></button>
+    <button class="tab" data-region="CN"><span class="flag">🇨🇳</span> 중국 <span class="dim">CN</span></button>
+    <button class="tab" data-region="EU"><span class="flag">🇪🇺</span> 유럽 <span class="dim">EU</span></button>
+    <button class="tab" data-region="JP"><span class="flag">🇯🇵</span> 일본 <span class="dim">JP</span></button>
+    <button class="tab" data-region="KR"><span class="flag">🇰🇷</span> 한국 <span class="dim">KR</span></button>
+  </div>
+
+  <!-- ========== KPI CARDS ========== -->
+  <div class="section-title">
+    <h2>글로벌 핵심 지표</h2><span class="en">Global Key Indicators</span>
+  </div>
+  <div class="kpi-grid" id="kpiGrid"></div>
+
+  <!-- ========== HEATMAP + VIX GAUGE ========== -->
+  <div class="section-title">
+    <h2>경제권 비교 매트릭스</h2><span class="en">Cross-Region Comparison Heatmap</span>
+  </div>
+  <div class="grid g-2">
+    <div class="card">
+      <h3>5대 경제권 지표 히트맵</h3>
+      <div class="h-en">색이 진할수록 해당 지표가 강함 · Darker = stronger reading</div>
+      <table class="matrix" id="matrix"></table>
+      <div class="legend-inline">
+        <span><i style="background:var(--down)"></i> 양호 / Favorable</span>
+        <span><i style="background:var(--warn)"></i> 중립 / Neutral</span>
+        <span><i style="background:var(--up)"></i> 주의 / Caution</span>
+      </div>
+    </div>
+    <div class="card">
+      <h3>투자공포지수 (VIX)</h3>
+      <div class="h-en">CBOE Volatility Index · 시장 변동성</div>
+      <div class="gauge-wrap">
+        <canvas id="vixGauge"></canvas>
+        <div class="gauge-center">
+          <div class="num" id="vixNum">17.4</div>
+          <div class="stat" id="vixStat">안정 · Calm</div>
+        </div>
+      </div>
+      <div class="legend-inline" style="justify-content:center;">
+        <span><i style="background:var(--down)"></i> &lt;20 안정</span>
+        <span><i style="background:var(--warn)"></i> 20–30 경계</span>
+        <span><i style="background:var(--up)"></i> &gt;30 공포</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== CHARTS ROW 1 ========== -->
+  <div class="section-title">
+    <h2>대표지수 &amp; 환율 추이</h2><span class="en">Equity Indices &amp; FX Trends</span>
+  </div>
+  <div class="grid g-2">
+    <div class="card">
+      <h3>대표지수 추이 (정규화, 기준=100)</h3>
+      <div class="h-en">S&amp;P500 · CSI300 · EuroStoxx50 · Nikkei225 · KOSPI · Source: Exchanges</div>
+      <div class="canvas-box"><canvas id="idxChart"></canvas></div>
+    </div>
+    <div class="card">
+      <h3>주요 환율 추이 (기준=100)</h3>
+      <div class="h-en">USD/KRW · USD/JPY · USD/CNY · EUR/USD · Source: ECB/BOK</div>
+      <div class="canvas-box"><canvas id="fxChart"></canvas></div>
+    </div>
+  </div>
+
+  <!-- ========== CHARTS ROW 2 ========== -->
+  <div class="section-title">
+    <h2>물가 &amp; 고용 비교</h2><span class="en">Inflation &amp; Employment</span>
+  </div>
+  <div class="grid g-3">
+    <div class="card">
+      <h3>소비자물가 CPI (전년동월비)</h3>
+      <div class="h-en">CPI YoY % · Source: BLS/Eurostat/NBS/MIC/KOSIS</div>
+      <div class="canvas-box sm"><canvas id="cpiChart"></canvas></div>
+    </div>
+    <div class="card">
+      <h3>실업률 (고용지표)</h3>
+      <div class="h-en">Unemployment Rate % · Source: BLS/Eurostat/OECD</div>
+      <div class="canvas-box sm"><canvas id="empChart"></canvas></div>
+    </div>
+    <div class="card">
+      <h3>정책금리</h3>
+      <div class="h-en">Policy Rate % · Source: Fed/PBoC/ECB/BOJ/BOK</div>
+      <div class="canvas-box sm"><canvas id="rateChart"></canvas></div>
+    </div>
+  </div>
+
+  <!-- ========== SIGNAL / ASSET FLOW INFOGRAPHIC ========== -->
+  <div class="section-title">
+    <h2>자산 흐름 &amp; 투자 시그널</h2><span class="en">Asset Flow &amp; Investment Signals</span>
+  </div>
+  <div class="grid g-2">
+    <div class="card">
+      <h3>경제권별 투자 매력도 신호등</h3>
+      <div class="h-en">매크로 모멘텀 기반 종합 신호 · Composite macro signal</div>
+      <div class="signal-grid" id="signalGrid"></div>
+    </div>
+    <div class="card">
+      <h3>위험자산 ↔ 안전자산 흐름</h3>
+      <div class="h-en">Risk-on / Risk-off 자금 흐름 (주간)</div>
+      <div class="flow">
+        <div class="node"><div class="big down" id="riskOff">안전자산</div><div class="cap">금·채권·달러 유입</div></div>
+        <div class="arrow" id="flowArrow">⇄</div>
+        <div class="node"><div class="big up" id="riskOn">위험자산</div><div class="cap">주식·신흥국 유입</div></div>
+      </div>
+      <div style="margin-top:14px" id="flowBars"></div>
+    </div>
+  </div>
+
+  <div class="footnote">
+    ⚠️ 본 대시보드는 <b>목업(mockup)</b>으로, 공신력 있는 기관(BLS · Eurostat · NBS · 일본 통계국/BOJ · KOSIS/한국은행 · EIA · CBOE · Fed/PBoC/ECB)의 최근 공개 수치를 참고한 <b>현실적 샘플 데이터</b>를 사용합니다. 실제 투자 판단의 근거로 사용하지 마세요.<br/>
+    Data is illustrative sample data based on recent public figures from official institutions. Not investment advice.
+  </div>
+</div>
+
+<script>
+/* =====================================================================
+   DATA — 공신력 기관 최근 공개 수치 기반 현실적 샘플 데이터
+   각 지표에 source(출처)/unit(단위) 명시. 추후 실 API 연동 시 이 객체만 교체.
+   // TODO(실 API 연동): FRED(미), Eurostat, Yahoo Finance(지수/FX), EIA(유가),
+   //   CBOE(VIX), 한국은행 ECOS / KOSIS(한국) 등에서 fetch 후 동일 스키마로 매핑.
+   ===================================================================== */
+const MONTHS = ['1월','2월','3월','4월','5월','6월'];
+const REGIONS = {
+  US: { name:'미국', en:'United States', flag:'🇺🇸', color:'var(--us)' },
+  CN: { name:'중국', en:'China',         flag:'🇨🇳', color:'var(--cn)' },
+  EU: { name:'유럽', en:'Euro Area',     flag:'🇪🇺', color:'var(--eu)' },
+  JP: { name:'일본', en:'Japan',         flag:'🇯🇵', color:'var(--jp)' },
+  KR: { name:'한국', en:'Korea',         flag:'🇰🇷', color:'var(--kr)' },
+};
+
+const DATA = {
+  // 글로벌 KPI 카드
+  kpi: [
+    { id:'wti',  label:'WTI 유가',     en:'Crude Oil',     icon:'🛢️', val:'72.8', unit:'USD/bbl', chg:+1.6, src:'EIA / NYMEX',
+      spark:[68,70,69,71,70,72.8] },
+    { id:'vix',  label:'투자공포지수',  en:'VIX',           icon:'😨', val:'17.4', unit:'pt', chg:-4.2, src:'CBOE',
+      spark:[21,19,22,18,18.5,17.4], invert:true },
+    { id:'dxy',  label:'달러인덱스',    en:'Dollar Index',  icon:'💵', val:'104.6',unit:'pt', chg:+0.3, src:'ICE',
+      spark:[103,104,105,104.2,104.4,104.6] },
+    { id:'cpi',  label:'미 소비자물가', en:'US CPI YoY',    icon:'📈', val:'3.1', unit:'% YoY', chg:-0.2, src:'BLS', invert:true,
+      spark:[3.4,3.2,3.5,3.4,3.3,3.1] },
+    { id:'emp',  label:'미 실업률',     en:'US Unemploy.',  icon:'👷', val:'4.0', unit:'%', chg:+0.1, src:'BLS', invert:true,
+      spark:[3.7,3.8,3.9,3.8,3.9,4.0] },
+    { id:'risk', label:'위험선호',      en:'Risk Appetite', icon:'🧭', val:'중립+',unit:'Risk-on', chg:+2.1, src:'Composite',
+      spark:[48,52,49,55,57,58] },
+  ],
+  // 히트맵: 지표 × 경제권. score 0~100(높을수록 강/양호), disp 표시값
+  matrix: [
+    { metric:'대표지수', en:'Equity', fmt:'%MoM',
+      cells:{ US:{d:'+2.1%',s:78}, CN:{d:'+0.4%',s:52}, EU:{d:'+1.3%',s:68}, JP:{d:'+3.0%',s:85}, KR:{d:'+1.8%',s:72} } },
+    { metric:'소비자물가', en:'CPI YoY', fmt:'',
+      cells:{ US:{d:'3.1%',s:55}, CN:{d:'0.3%',s:88}, EU:{d:'2.4%',s:70}, JP:{d:'2.8%',s:62}, KR:{d:'2.7%',s:64} } },
+    { metric:'고용(실업률)', en:'Unemploy.', fmt:'',
+      cells:{ US:{d:'4.0%',s:72}, CN:{d:'5.1%',s:55}, EU:{d:'6.4%',s:48}, JP:{d:'2.6%',s:90}, KR:{d:'2.8%',s:86} } },
+    { metric:'환율(vs USD)', en:'FX', fmt:'',
+      cells:{ US:{d:'104.6',s:60}, CN:{d:'7.18',s:50}, EU:{d:'1.08',s:58}, JP:{d:'157',s:32}, KR:{d:'1,372',s:42} } },
+    { metric:'정책금리', en:'Policy Rate', fmt:'',
+      cells:{ US:{d:'4.50%',s:62}, CN:{d:'3.10%',s:55}, EU:{d:'3.40%',s:60}, JP:{d:'0.50%',s:40}, KR:{d:'2.75%',s:58} } },
+  ],
+  // 대표지수 정규화 추이 (기준=100, 연초 대비)
+  indices: {
+    labels: MONTHS,
+    series: {
+      US:[100,101.5,103,102.4,104.1,106.2], CN:[100,99,100.5,99.8,100.2,100.6],
+      EU:[100,100.8,102,101.5,102.7,104.0], JP:[100,102,104.5,103.8,106.2,109.3],
+      KR:[100,100.6,101.4,100.9,102.2,104.0],
+    }
+  },
+  // 환율 정규화 추이 (기준=100)
+  fx: {
+    labels: MONTHS,
+    series: {
+      'USD/KRW':[100,100.4,101.2,100.8,101.6,101.9], 'USD/JPY':[100,101.5,103,103.6,104.8,105.2],
+      'USD/CNY':[100,100.2,100.6,100.5,100.8,100.9], 'EUR/USD':[100,99.7,99.4,99.6,99.2,99.0],
+    }
+  },
+  // CPI YoY 현재값
+  cpi: { US:3.1, CN:0.3, EU:2.4, JP:2.8, KR:2.7 },
+  // 실업률
+  emp: { US:4.0, CN:5.1, EU:6.4, JP:2.6, KR:2.8 },
+  // 정책금리
+  rate:{ US:4.50, CN:3.10, EU:3.40, JP:0.50, KR:2.75 },
+  vix: 17.4,
+  // 투자 시그널 신호등
+  signals: {
+    US:{ light:'🟢', verdict:'비중확대', vEn:'Overweight', note:'견조한 성장 · 디스인플레 진행' },
+    CN:{ light:'🟡', verdict:'중립',     vEn:'Neutral',    note:'부양 기대 vs 부동산 리스크' },
+    EU:{ light:'🟡', verdict:'중립',     vEn:'Neutral',    note:'완만 회복 · 금리인하 사이클' },
+    JP:{ light:'🟢', verdict:'비중확대', vEn:'Overweight', note:'기업개혁 · 엔저 수혜 지속' },
+    KR:{ light:'🟢', verdict:'비중확대', vEn:'Overweight', note:'반도체 업황 · 수출 회복' },
+  },
+  // 자산 흐름 (주간, % 자금흐름 방향)
+  flow: { riskOn: 58, riskOff: 42,
+    bars:[ {k:'주식 Equities', v:62, c:'var(--up)'}, {k:'채권 Bonds', v:48, c:'var(--down)'},
+           {k:'금 Gold', v:55, c:'var(--warn)'}, {k:'달러 USD Cash', v:40, c:'var(--accent)'} ] }
+};
+
+/* ===================== THEME ===================== */
+const root = document.documentElement;
+function cssVar(n){ return getComputedStyle(root).getPropertyValue(n).trim(); }
+function applyTheme(t){
+  root.setAttribute('data-theme', t);
+  document.getElementById('themeBtn').firstChild.textContent = (t==='dark'?'🌙 ':'☀️ ');
+  document.getElementById('themeLabel').textContent = (t==='dark'?'다크':'라이트');
+  try{ localStorage.setItem('econ-theme', t);}catch(e){}
+}
+let theme = 'dark';
+try { theme = localStorage.getItem('econ-theme') || 'dark'; } catch(e){}
+applyTheme(theme);
+document.getElementById('themeBtn').addEventListener('click', ()=>{
+  theme = (root.getAttribute('data-theme')==='dark') ? 'light' : 'dark';
+  applyTheme(theme);
+  rebuildAllCharts();
+});
+
+/* ===================== KPI CARDS ===================== */
+function renderKPIs(){
+  const grid = document.getElementById('kpiGrid');
+  grid.innerHTML = '';
+  DATA.kpi.forEach(k=>{
+    const up = k.chg >= 0;
+    // invert: 지표 성격상 상승이 부정적(물가/실업/공포)일 때 색 반전
+    const good = k.invert ? !up : up;
+    const colorClass = good ? 'down' : 'up';
+    const arrow = up ? '▲' : '▼';
+    const el = document.createElement('div');
+    el.className = 'kpi';
+    el.innerHTML = `
+      <div class="top">
+        <div class="label">${k.label}<span class="en">${k.en}</span></div>
+        <div class="icon">${k.icon}</div>
+      </div>
+      <div class="val">${k.val} <span class="unit">${k.unit}</span></div>
+      <div class="chg ${colorClass}">${arrow} ${Math.abs(k.chg)}${k.id==='risk'?'':(k.unit.includes('%')?'%p':'%')}</div>
+      <canvas class="spark" id="spark-${k.id}"></canvas>
+      <div class="src">출처 · ${k.src}</div>`;
+    grid.appendChild(el);
+  });
+}
+
+/* ===================== HEATMAP ===================== */
+function scoreColor(s){
+  // 0~100 → 빨강(주의)→노랑(중립)→초록(양호)
+  if (s>=70) return cssVar('--down');
+  if (s>=50) return cssVar('--warn');
+  return cssVar('--up');
+}
+function renderMatrix(){
+  const t = document.getElementById('matrix');
+  const keys = Object.keys(REGIONS);
+  let html = '<tr><th class="row-h">지표 / Metric</th>';
+  keys.forEach(k=> html += `<th><span class="flag-h">${REGIONS[k].flag}</span><br/>${REGIONS[k].name}</th>`);
+  html += '</tr>';
+  DATA.matrix.forEach(row=>{
+    html += `<tr><td class="row-h">${row.metric}<span class="en">${row.en}</span></td>`;
+    keys.forEach(k=>{
+      const c = row.cells[k];
+      html += `<td><div class="cell" data-region="${k}" style="background:${scoreColor(c.s)}">${c.d}</div></td>`;
+    });
+    html += '</tr>';
+  });
+  t.innerHTML = html;
+}
+
+/* ===================== SIGNALS + FLOW ===================== */
+function renderSignals(){
+  const g = document.getElementById('signalGrid'); g.innerHTML='';
+  Object.keys(REGIONS).forEach(k=>{
+    const r=REGIONS[k], s=DATA.signals[k];
+    const v = document.createElement('div'); v.className='sig'; v.dataset.region=k;
+    const vcolor = s.light==='🟢'?'var(--down)':(s.light==='🟡'?'var(--warn)':'var(--up)');
+    v.innerHTML = `<div class="flag">${r.flag}</div>
+      <div class="name">${r.name}<span class="en">${r.en}</span></div>
+      <div class="light">${s.light}</div>
+      <div class="verdict" style="color:${vcolor}">${s.verdict} · ${s.vEn}</div>
+      <div class="note">${s.note}</div>`;
+    g.appendChild(v);
+  });
+  document.getElementById('riskOn').textContent = '위험자산 '+DATA.flow.riskOn+'%';
+  document.getElementById('riskOff').textContent = '안전자산 '+DATA.flow.riskOff+'%';
+  document.getElementById('flowArrow').textContent = DATA.flow.riskOn>=50 ? '⇒' : '⇐';
+  const fb = document.getElementById('flowBars'); fb.innerHTML='';
+  DATA.flow.bars.forEach(b=>{
+    const row=document.createElement('div'); row.className='bar-row';
+    row.innerHTML = `<div class="lab"><span>${b.k}</span><b>${b.v}%</b></div>
+      <div class="track"><div style="width:${b.v}%;background:${b.c}"></div></div>`;
+    fb.appendChild(row);
+  });
+}
+
+/* ===================== CHARTS ===================== */
+let charts = {};
+function gridColor(){ return cssVar('--border'); }
+function tickColor(){ return cssVar('--text-dim'); }
+function regionColor(k){ return cssVar(REGIONS[k].color.replace('var(','').replace(')','')); }
+
+function baseLineOpts(){
+  return {
+    responsive:true, maintainAspectRatio:false,
+    interaction:{ mode:'index', intersect:false },
+    plugins:{
+      legend:{ position:'bottom', labels:{ color:tickColor(), boxWidth:12, boxHeight:12, font:{size:11}, usePointStyle:true } },
+      tooltip:{ backgroundColor:cssVar('--panel-2'), titleColor:cssVar('--text'), bodyColor:cssVar('--text-dim'), borderColor:gridColor(), borderWidth:1, padding:10 }
+    },
+    scales:{
+      x:{ grid:{ color:gridColor() }, ticks:{ color:tickColor(), font:{size:11} } },
+      y:{ grid:{ color:gridColor() }, ticks:{ color:tickColor(), font:{size:11} } }
+    }
+  };
+}
+function baseBarOpts(suffix){
+  const o = baseLineOpts();
+  o.plugins.legend.display = false;
+  o.scales.y.ticks.callback = v => v+ (suffix||'');
+  return o;
+}
+
+function buildSparks(){
+  DATA.kpi.forEach(k=>{
+    const ctx = document.getElementById('spark-'+k.id); if(!ctx) return;
+    const up = k.chg>=0; const good = k.invert? !up:up;
+    const col = good ? cssVar('--down') : cssVar('--up');
+    charts['spark-'+k.id] = new Chart(ctx, {
+      type:'line',
+      data:{ labels:k.spark.map((_,i)=>i), datasets:[{ data:k.spark, borderColor:col, borderWidth:2,
+        fill:true, backgroundColor:col+'22', tension:.4, pointRadius:0 }] },
+      options:{ responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false},tooltip:{enabled:false}},
+        scales:{ x:{display:false}, y:{display:false} }, animation:false }
+    });
+  });
+}
+
+function buildIndexChart(){
+  const ctx=document.getElementById('idxChart');
+  charts.idx = new Chart(ctx,{ type:'line',
+    data:{ labels:DATA.indices.labels, datasets:Object.keys(DATA.indices.series).map(k=>({
+      label:REGIONS[k].name+' ('+k+')', data:DATA.indices.series[k], borderColor:regionColor(k),
+      backgroundColor:regionColor(k)+'18', borderWidth:2.4, tension:.35, pointRadius:0, pointHoverRadius:4 })) },
+    options: baseLineOpts() });
+}
+function buildFxChart(){
+  const ctx=document.getElementById('fxChart');
+  const cols=[cssVar('--us'),cssVar('--jp'),cssVar('--cn'),cssVar('--eu')];
+  charts.fx = new Chart(ctx,{ type:'line',
+    data:{ labels:DATA.fx.labels, datasets:Object.keys(DATA.fx.series).map((k,i)=>({
+      label:k, data:DATA.fx.series[k], borderColor:cols[i], backgroundColor:cols[i]+'18',
+      borderWidth:2.4, tension:.35, pointRadius:0, pointHoverRadius:4 })) },
+    options: baseLineOpts() });
+}
+function buildBarChart(id, dataObj, suffix){
+  const ctx=document.getElementById(id);
+  const keys=Object.keys(dataObj);
+  charts[id]=new Chart(ctx,{ type:'bar',
+    data:{ labels:keys.map(k=>REGIONS[k].flag+' '+REGIONS[k].name),
+      datasets:[{ data:keys.map(k=>dataObj[k]), backgroundColor:keys.map(k=>regionColor(k)),
+        borderRadius:7, maxBarThickness:46 }] },
+    options: baseBarOpts(suffix) });
+}
+function buildVixGauge(){
+  const ctx=document.getElementById('vixGauge');
+  const v=DATA.vix; const max=50;
+  const stat = v<20?{t:'안정 · Calm',c:cssVar('--down')}:(v<30?{t:'경계 · Alert',c:cssVar('--warn')}:{t:'공포 · Fear',c:cssVar('--up')});
+  document.getElementById('vixNum').textContent=v;
+  document.getElementById('vixStat').textContent=stat.t;
+  document.getElementById('vixStat').style.color=stat.c;
+  charts.vix=new Chart(ctx,{ type:'doughnut',
+    data:{ datasets:[{ data:[v, max-v], backgroundColor:[stat.c, cssVar('--border')],
+      borderWidth:0, circumference:180, rotation:270, cutout:'72%' }] },
+    options:{ responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false},tooltip:{enabled:false}}, animation:{duration:600} } });
+}
+
+function rebuildAllCharts(){
+  Object.values(charts).forEach(c=>{ try{c.destroy();}catch(e){} });
+  charts={};
+  buildSparks(); buildIndexChart(); buildFxChart();
+  buildBarChart('cpiChart', DATA.cpi, '%');
+  buildBarChart('empChart', DATA.emp, '%');
+  buildBarChart('rateChart', DATA.rate, '%');
+  buildVixGauge();
+}
+
+/* ===================== REGION FILTER ===================== */
+let activeRegion='ALL';
+function applyRegionFilter(){
+  // 히트맵 셀 + 시그널 카드 강조/디밍
+  document.querySelectorAll('.cell[data-region]').forEach(el=>{
+    el.style.opacity = (activeRegion==='ALL'||el.dataset.region===activeRegion)?'1':'0.22';
+  });
+  document.querySelectorAll('.sig[data-region]').forEach(el=>{
+    const on=(activeRegion==='ALL'||el.dataset.region===activeRegion);
+    el.style.opacity = on?'1':'0.3';
+    el.style.borderColor = (activeRegion!=='ALL'&&on)?cssVar('--accent'):cssVar('--border');
+  });
+  // 라인차트 데이터셋 강조
+  [charts.idx].forEach(ch=>{ if(!ch) return;
+    ch.data.datasets.forEach(ds=>{
+      const code=Object.keys(REGIONS).find(k=>ds.label.includes(REGIONS[k].name));
+      const dim=(activeRegion!=='ALL'&&code!==activeRegion);
+      ds.borderWidth = dim?1:2.6; ds.borderColor = dim? cssVar('--text-faint')+'55' : regionColor(code);
+    });
+    ch.update();
+  });
+  // 막대차트 강조
+  ['cpiChart','empChart','rateChart'].forEach(id=>{ const ch=charts[id]; if(!ch) return;
+    const keys=Object.keys(REGIONS);
+    ch.data.datasets[0].backgroundColor = keys.map(k=> (activeRegion==='ALL'||k===activeRegion)? regionColor(k) : cssVar('--border'));
+    ch.update();
+  });
+}
+document.getElementById('tabs').addEventListener('click', e=>{
+  const btn=e.target.closest('.tab'); if(!btn) return;
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  btn.classList.add('active');
+  activeRegion = btn.dataset.region;
+  applyRegionFilter();
+});
+
+/* ===================== INIT ===================== */
+function init(){
+  renderKPIs(); renderMatrix(); renderSignals(); rebuildAllCharts();
+}
+if (typeof Chart !== 'undefined') { init(); }
+else { window.addEventListener('load', ()=>{ if(typeof Chart!=='undefined') init(); }); }
+</script>
+</body>
+</html>
