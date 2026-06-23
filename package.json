@@ -1,0 +1,17 @@
+{
+  "name": "econ-dashboard-repo",
+  "version": "7.3.0",
+  "private": true,
+  "description": "자산운용 전략 Council · 세계 5대 경제권 대시보드 — 이미지 렌더(산출물) 도구",
+  "scripts": {
+    "render": "node scripts/render.mjs",
+    "render:council": "node scripts/render-council.mjs"
+  },
+  "devDependencies": {
+    "esbuild": "0.23.1",
+    "playwright": "1.56.1",
+    "react": "18.3.1",
+    "react-dom": "18.3.1",
+    "recharts": "2.15.4"
+  }
+}
