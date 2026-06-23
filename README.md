@@ -18,18 +18,13 @@
 
 ```
 econ-dashboard-repo/
-├── index.html               # ① Global Macro Tracker — 공개 대시보드 (단일 HTML)
+├── index.html               # Global Macro Tracker — 공개 대시보드 (단일 HTML)
 ├── assets/
 │   └── chart.umd.min.js      # Chart.js v4.4.3 로컬 번들 (오프라인 동작용)
 ├── renders/                 # index.html 렌더 산출물
 │   └── mockup-{dark,light}.png
 ├── scripts/
-│   ├── render.mjs            # index.html → PNG 렌더 (npm run render)
-│   └── render-council.mjs    # council 대시보드 → PNG 렌더 (npm run render:council)
-├── council/                 # ② 자산운용 전략 Council — 비공개(개인용) 대시보드
-│   ├── council-dashboard.jsx # React + recharts, LNB 3페이지
-│   ├── renders/              # council 렌더 산출물 (PNG 6장)
-│   └── README.md             # council 전용 안내 ⚠️ 개인 금융정보 포함
+│   └── render.mjs            # index.html → PNG 렌더 (npm run render)
 ├── docs/
 │   ├── DASHBOARD_STRUCTURE.md # 대시보드 구조·재사용 블루프린트
 │   └── REFRESH.md            # 정기 갱신 운영 가이드 (스케줄·런북)
@@ -37,8 +32,9 @@ econ-dashboard-repo/
 └── .claude/                 # SessionStart 훅 (렌더 도구 자동 준비)
 ```
 
-> ⚠️ `council/`은 계좌 잔고·보유종목 등 **개인 금융정보**를 포함하는 비공개 영역입니다.
-> 자세한 내용은 [`council/README.md`](./council/README.md)를 참고하세요.
+> 🔒 이 저장소는 **공개 대시보드 전용**입니다. 과거에 포함돼 있던 개인 자산운용
+> 대시보드(`council/`)는 계좌 잔고·보유종목 등 **개인 금융정보**를 담고 있어
+> **별도의 비공개(private) 저장소로 분리**되었습니다. (히스토리 포함 이 저장소에서 제거됨)
 
 ## 주요 기능 (Global Macro Tracker)
 - **글로벌 KPI 카드뷰** — 유가(WTI), 투자공포지수(VIX), 달러인덱스(DXY), 미 CPI, 미 실업률, 위험선호 신호. 각 카드에 미니 스파크라인 + 전기대비 변동 + 출처 표기.
@@ -73,7 +69,6 @@ npm install
 npx playwright install chromium
 
 npm run render            # index.html → renders/mockup-{dark,light}.png
-npm run render:council    # council 대시보드 → council/renders/*.png (6장)
 ```
 
 > Claude Code on the web 세션에서는 `.claude/hooks/session-start.sh`(SessionStart 훅)가
@@ -105,10 +100,8 @@ npm run render:council    # council 대시보드 → council/renders/*.png (6장
 
 ## 기술 스택
 - **대시보드(`index.html`)** — 단일 HTML + 바닐라 JS, [Chart.js](https://www.chartjs.org/) v4.4.3(로컬 번들), CSS 변수 기반 다크/라이트 테마
-- **Council(`council/`)** — React 18 + [recharts](https://recharts.org/)
-- **렌더 도구(`scripts/`)** — [Playwright](https://playwright.dev/)(헤드리스 Chromium) · esbuild
+- **렌더 도구(`scripts/`)** — [Playwright](https://playwright.dev/)(헤드리스 Chromium)
 
 ## 더 읽기
 - [`docs/DASHBOARD_STRUCTURE.md`](./docs/DASHBOARD_STRUCTURE.md) — 대시보드 구조·재사용 블루프린트
 - [`docs/REFRESH.md`](./docs/REFRESH.md) — 정기 갱신 운영 가이드(스케줄·런북)
-- [`council/README.md`](./council/README.md) — Council 대시보드 안내(비공개)

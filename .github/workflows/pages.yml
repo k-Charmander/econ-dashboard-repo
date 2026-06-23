@@ -28,9 +28,10 @@ jobs:
         uses: actions/configure-pages@v5
         with:
           enablement: true
-      - name: Prepare publish directory (개인정보 council/ 제외)
+      - name: Prepare publish directory (공개 콘텐츠만 게시)
         run: |
-          # 공개 대시보드만 _site로 복사. council/(개인 금융정보)와 개발/도구 파일은 제외.
+          # 공개 대시보드만 _site로 복사. 개발/도구 파일 제외.
+          # council/(개인 금융정보)는 별도 private 저장소로 분리됨 — 재유입 방지용 안전장치로 exclude·guard 유지.
           rsync -a --delete \
             --exclude '.git' \
             --exclude '.github' \
