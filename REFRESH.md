@@ -25,7 +25,8 @@ Claude 세션에서 **"대시보드 업데이트해줘"** 호출 시 수행하�
    헤더 `#updated-time`·푸터 출처 기준일 갱신.
 3. **렌더링** — `node scripts/render.mjs` → `mockup-dark.png`, `mockup-light.png`.
    (콘솔 에러 0 확인)
-4. **공유/커밋** — 이미지 전송 후 변경 커밋·푸시.
+4. **공유/커밋** — 이미지 전송 후 변경 커밋·푸시. 푸시되면 GitHub Pages가 자동 재배포되므로
+   **라이브 대시보드 URL도 함께 제공**: https://k-charmander.github.io/econ-dashboard-repo/
 
 ## 렌더링 사전 준비 (세션 1회)
 `scripts/render.mjs`는 Playwright + Chromium이 필요하다. 새 컨테이너에서는 1회 설치:
@@ -53,6 +54,7 @@ node scripts/render.mjs
   ```
   REFRESH.md의 갱신 절차에 따라 대시보드를 최신 공신력 데이터로 업데이트하고,
   mockup-dark.png / mockup-light.png 를 렌더링해서 이미지로 보여줘. 변경은 커밋·푸시.
+  배포된 라이브 대시보드 url도 같이 제공해줘: https://k-charmander.github.io/econ-dashboard-repo/
   ```
 
 자세한 설정 방법: https://code.claude.com/docs/en/claude-code-on-the-web
