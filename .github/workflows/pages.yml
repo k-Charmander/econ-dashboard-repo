@@ -28,11 +28,27 @@ jobs:
         uses: actions/configure-pages@v5
         with:
           enablement: true
+      - name: Prepare publish directory (개인정보 council/ 제외)
+        run: |
+          # 공개 대시보드만 _site로 복사. council/(개인 금융정보)와 개발/도구 파일은 제외.
+          rsync -a --delete \
+            --exclude '.git' \
+            --exclude '.github' \
+            --exclude '.claude' \
+            --exclude 'node_modules' \
+            --exclude 'council' \
+            --exclude '_site' \
+            ./ _site/
+          # 안전장치: council/ 또는 .jsx가 산출물에 남아 있으면 배포 실패 처리
+          if [ -e _site/council ] || find _site -name '*.jsx' | grep -q .; then
+            echo "::error::비공개 콘텐츠(council/ 또는 .jsx)가 _site에 포함됨 — 배포 중단"
+            exit 1
+          fi
       - name: Upload site artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          # 저장소 루트 전체 게시(index.html · assets/ · council/ 포함)
-          path: '.'
+          # council/(개인정보) 제외한 공개 콘텐츠만 게시
+          path: '_site'
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
