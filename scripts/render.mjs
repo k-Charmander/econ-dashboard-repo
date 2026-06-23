@@ -1,10 +1,11 @@
 // 대시보드(index.html)를 헤드리스 Chromium으로 PNG 렌더링.
 // 사용: node scripts/render.mjs   (Playwright + chromium 필요 — SessionStart 훅이 설치)
-// 산출: mockup-dark.png, mockup-light.png (저장소 루트)
+// 산출: renders/mockup-dark.png, renders/mockup-light.png
 import { createRequire } from 'module';
 import { execSync } from 'child_process';
 import { fileURLToPath } from 'url';
 import path from 'path';
+import fs from 'fs';
 
 const require = createRequire(import.meta.url);
 // Playwright는 전역 설치본일 수 있으므로 견고하게 resolve
@@ -18,6 +19,8 @@ try {
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const file = 'file://' + path.join(root, 'index.html');
+const outDir = path.join(root, 'renders');
+fs.mkdirSync(outDir, { recursive: true });
 
 const browser = await chromium.launch();
 const ctx = await browser.newContext({ viewport: { width: 1500, height: 1000 }, deviceScaleFactor: 2 });
@@ -34,8 +37,8 @@ async function shot(theme, out) {
     if (window.rebuildAllCharts) window.rebuildAllCharts();
   }, theme);
   await page.waitForTimeout(1200);
-  await page.screenshot({ path: path.join(root, out), fullPage: true });
-  console.log('wrote', out);
+  await page.screenshot({ path: path.join(outDir, out), fullPage: true });
+  console.log('wrote', path.join('renders', out));
 }
 
 await shot('dark', 'mockup-dark.png');

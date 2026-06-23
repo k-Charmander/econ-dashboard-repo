@@ -28,7 +28,8 @@
 │   └── chart.umd.min.js        # Chart.js v4 로컬 번들 (npm registry tarball에서 추출)
 ├── scripts/
 │   └── render.mjs              # Playwright 헤드리스 PNG 렌더 (dark/light)
-└── (mockup-dark.png / mockup-light.png)  # 렌더 산출물
+└── renders/
+    └── mockup-dark.png / mockup-light.png  # 렌더 산출물
 ```
 
 Chart.js 로컬 번들 받기(CDN 차단 환경 대비, npm registry는 보통 허용):
@@ -256,7 +257,7 @@ function rebuildAllCharts(){
 
 ```bash
 playwright install chromium      # 컨테이너당 1회
-node scripts/render.mjs          # → mockup-dark.png / mockup-light.png
+node scripts/render.mjs          # → renders/mockup-dark.png / renders/mockup-light.png
 ```
 
 렌더 시 테마 전환: `page.evaluate(t => { document.documentElement.setAttribute('data-theme',t); window.rebuildAllCharts(); }, theme)` 후 스크린샷.
@@ -274,4 +275,4 @@ node scripts/render.mjs          # → mockup-dark.png / mockup-light.png
 7. (선택) 실데이터 연동 — `DATA`를 `fetch` 결과로 채우는 매핑 함수만 추가
 
 > 뷰 로직은 그대로 두고 `DATA`만 바꾸는 것이 이식의 핵심이다.
-> 데이터 출처·갱신 절차는 `REFRESH.md` 참고.
+> 데이터 출처·갱신 절차는 [`REFRESH.md`](./REFRESH.md) 참고.
