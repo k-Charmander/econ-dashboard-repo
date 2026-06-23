@@ -334,7 +334,7 @@
     CPI: 미 BLS 4.2%(5월,6/10)·중 NBS 1.2%(5월)·유로 Eurostat 3.2%(5월)·일 총무성 1.5%(5월)·한 통계청 3.1%(5월) ·
     실업률: 미 4.3%·중 5.1%·유로 6.3%·일 2.5%·한 2.8% ·
     정책금리: Fed 3.50–3.75%·PBoC LPR 3.0%·ECB 예금 2.50%·BOJ 1.0%·BOK 2.50% ·
-    지수/환율 현물(6/23): S&amp;P500 7,473·Nikkei 72,354·KOSPI 8,204·CSI300 4,919·STOXX50 6,232 / USD-KRW 1,550·USD-JPY 161.6·EUR-USD 1.142·USD-CNY 6.77.<br/>
+    지수/환율 현물(6/23): S&amp;P500 7,473·Nikkei 72,379·KOSPI 8,204·CSI300 4,919·STOXX50 6,232 / USD-KRW 1,550·USD-JPY 161.6·EUR-USD 1.142·USD-CNY 6.77.<br/>
     📈 지수·환율 6개월 추이선은 공개 월별 종가/고저·평균 기반(S&amp;P500·Nikkei·KOSPI 실측, CSI300·STOXX50·CNY 일부 추정), 끝점은 실제 현재값입니다. 투자 판단의 단독 근거로 사용하지 마세요. · Not investment advice.
   </div>
 </div>
@@ -358,12 +358,12 @@ const REGIONS = {
 const DATA = {
   // 글로벌 KPI 카드 — 2026-06 공신력 출처 실측치
   kpi: [
-    { id:'wti',  label:'WTI 유가',     en:'Crude Oil',     icon:'🛢️', val:'73.9', unit:'USD/bbl', chg:-2.6, src:'EIA·NYMEX · 6/23',
-      spark:[85,80,83,76.5,75.9,73.9] },
-    { id:'vix',  label:'투자공포지수',  en:'VIX',           icon:'😨', val:'20.5', unit:'pt', chg:+13.9, src:'CBOE · 6/23', invert:true,
-      spark:[22,18,16.4,16.8,17.3,20.5] },
-    { id:'dxy',  label:'달러인덱스',    en:'Dollar Index',  icon:'💵', val:'101.0',unit:'pt', chg:+0.2, src:'ICE · 6/23',
-      spark:[99,99.5,100.1,100.6,100.8,101.0] },
+    { id:'wti',  label:'WTI 유가',     en:'Crude Oil',     icon:'🛢️', val:'73.7', unit:'USD/bbl', chg:-2.9, src:'EIA·NYMEX · 6/23',
+      spark:[85,80,83,76.5,75.9,73.7] },
+    { id:'vix',  label:'투자공포지수',  en:'VIX',           icon:'😨', val:'17.9', unit:'pt', chg:+3.5, src:'CBOE · 6/23', invert:true,
+      spark:[22,18,16.4,16.8,17.3,17.9] },
+    { id:'dxy',  label:'달러인덱스',    en:'Dollar Index',  icon:'💵', val:'100.8',unit:'pt', chg:0.0, src:'ICE · 6/23',
+      spark:[99,99.5,100.1,100.6,100.8,100.8] },
     { id:'cpi',  label:'미 소비자물가', en:'US CPI YoY',    icon:'📈', val:'4.2', unit:'% YoY', chg:+0.4, src:'BLS · 5월(6/10)', invert:true,
       spark:[3.1,3.3,3.6,3.6,3.8,4.2] },
     { id:'emp',  label:'미 실업률',     en:'US Unemploy.',  icon:'👷', val:'4.3', unit:'%', chg:0.0, src:'BLS · 5월(6/5)', invert:true,
@@ -388,7 +388,7 @@ const DATA = {
   // 6/22 반도체발 글로벌 매도→6/23 KOSPI -10%·회로차단기 발동, Nikkei +1.6% 반등
   indices: {
     labels: MONTHS,
-    levels: { US:'7,473', CN:'4,919', EU:'6,232', JP:'72,354', KR:'8,204' },
+    levels: { US:'7,473', CN:'4,919', EU:'6,232', JP:'72,379', KR:'8,204' },
     series: {
       US:[100,99.2,94.1,103.5,109.0,107.7], CN:[100,96.9,92.7,94.8,100.5,102.4],
       EU:[100,101.9,98.1,105.6,112.0,115.4], JP:[100,101.8,109.4,102.9,113.3,125.1],
@@ -411,7 +411,7 @@ const DATA = {
   emp: { US:4.3, CN:5.1, EU:6.3, JP:2.5, KR:2.8 },
   // 정책금리 실측
   rate:{ US:3.75, CN:3.00, EU:2.50, JP:1.00, KR:2.50 },
-  vix: 20.5,
+  vix: 17.9,
   // 투자 시그널 신호등 — 데이터 기반 종합 판단
   signals: {
     US:{ light:'🟡', verdict:'중립',     vEn:'Neutral',    note:'고용 견조(4.3%)·물가 4.2% vs 반도체 불안·VIX 20대' },
