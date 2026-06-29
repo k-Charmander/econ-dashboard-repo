@@ -52,9 +52,9 @@ node scripts/render.mjs
 - **저장소/브랜치:** `k-charmander/econ-dashboard-repo` · `claude/economic-dashboard-mockup-6a4sl2`
 - **프롬프트:**
   ```
-  docs/REFRESH.md의 갱신 절차에 따라 대시보드를 최신 공신력 데이터로 업데이트하고,
+  docs/REFRESH.md의 갱신 절차에 따라 대시보드를 최신 공신력 데이터로 업데이트해줘.
+  url도 같이 제공해줘: https://k-charmander.github.io/econ-dashboard-repo/
   renders/mockup-dark.png / renders/mockup-light.png 를 렌더링해서 이미지로 보여줘. 변경은 커밋·푸시.
-  배포된 라이브 대시보드 url도 같이 제공해줘: https://k-charmander.github.io/econ-dashboard-repo/
   ```
 
 자세한 설정 방법: https://code.claude.com/docs/en/claude-code-on-the-web

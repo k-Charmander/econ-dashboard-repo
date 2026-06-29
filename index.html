@@ -213,7 +213,7 @@
     <div class="spacer"></div>
     <div class="updated">
       <div><span class="live-dot"></span><b>온디맨드 갱신 · 공신력 출처</b></div>
-      <div id="updated-time">데이터 기준: 2026-06-28 · 지표별 최신 발표 기준</div>
+      <div id="updated-time">데이터 기준: 2026-06-29 · 지표별 최신 발표 기준</div>
     </div>
     <button class="theme-toggle" id="themeBtn">🌙 <span id="themeLabel">다크</span></button>
   </header>
@@ -274,12 +274,12 @@
   <div class="grid g-2">
     <div class="card">
       <h3>대표지수 추이 (정규화, 기준=100, 1월말)</h3>
-      <div class="h-en">월별 실측 종가 기반(S&amp;P500·Nikkei·KOSPI), CN·EU 일부 추정 · 범례=현재 레벨(6/26)</div>
+      <div class="h-en">월별 실측 종가 기반(S&amp;P500·Nikkei·KOSPI), CN·EU 일부 추정 · 범례=현재 레벨(6/29)</div>
       <div class="canvas-box"><canvas id="idxChart"></canvas></div>
     </div>
     <div class="card">
       <h3>주요 환율 추이 (정규화, 기준=100, 1월)</h3>
-      <div class="h-en">월별 공개 고저·평균 기반(KRW·JPY·EUR), CNY 일부 추정 · 범례=현물(6/26)</div>
+      <div class="h-en">월별 공개 고저·평균 기반(KRW·JPY·EUR), CNY 일부 추정 · 범례=현물(6/29)</div>
       <div class="canvas-box"><canvas id="fxChart"></canvas></div>
     </div>
   </div>
@@ -329,12 +329,12 @@
   </div>
 
   <div class="footnote">
-    📊 <b>데이터 기준 2026-06-28</b> · 웹 조회 기반 온디맨드 갱신. 출처/기준월:
-    유가 EIA·NYMEX(6/26) · VIX CBOE(6/26) · DXY ICE(6/26) ·
+    📊 <b>데이터 기준 2026-06-29</b> · 웹 조회 기반 온디맨드 갱신. 출처/기준월:
+    유가 EIA·NYMEX(6/26) · VIX CBOE(6/29, 19.0) · DXY ICE(6/29, 101.2) ·
     CPI: 미 BLS 4.2%(5월,6/10)·중 NBS 1.2%(5월)·유로 Eurostat 3.2%(5월)·일 총무성 1.5%(5월)·한 통계청 3.1%(5월) ·
     실업률: 미 4.3%·중 5.1%·유로 6.3%·일 2.5%·한 2.8% ·
     정책금리: Fed 3.50–3.75%·PBoC LPR 3.0%·ECB 예금 2.25%(6/17 인상)·BOJ 1.0%·BOK 2.50% ·
-    지수/환율 현물(6/26): S&amp;P500 7,354·Nikkei 69,361·KOSPI 8,411·CSI300 4,777·STOXX50 6,222 / USD-KRW 1,535·USD-JPY 161.6·EUR-USD 1.138·USD-CNY 6.81.<br/>
+    지수/환율 현물(6/26~6/29): S&amp;P500 7,354·Nikkei 69,361·KOSPI 8,411·CSI300 4,749·STOXX50 6,212 / USD-KRW 1,535·USD-JPY 161.8·EUR-USD 1.137·USD-CNY 6.80.<br/>
     📈 지수·환율 6개월 추이선은 공개 월별 종가/고저·평균 기반(S&amp;P500·Nikkei·KOSPI 실측, CSI300·STOXX50·CNY 일부 추정), 끝점은 실제 현재값입니다. 투자 판단의 단독 근거로 사용하지 마세요. · Not investment advice.
   </div>
 </div>
@@ -356,53 +356,53 @@ const REGIONS = {
 };
 
 const DATA = {
-  // 글로벌 KPI 카드 — 2026-06-28 갱신 (시장 기준일: 6/26 종가)
+  // 글로벌 KPI 카드 — 2026-06-29 갱신 (시장 기준일: 6/26 종가·6/29 아시아장)
   kpi: [
     { id:'wti',  label:'WTI 유가',     en:'Crude Oil',     icon:'🛢️', val:'68.9', unit:'USD/bbl', chg:-3.8, src:'EIA·NYMEX · 6/26',
       spark:[80,83,76.5,74.1,70.7,68.9] },
-    { id:'vix',  label:'투자공포지수',  en:'VIX',           icon:'😨', val:'18.4', unit:'pt', chg:-2.5, src:'CBOE · 6/26', invert:true,
-      spark:[22,18,16.4,16.8,17.3,18.4] },
-    { id:'dxy',  label:'달러인덱스',    en:'Dollar Index',  icon:'💵', val:'101.4',unit:'pt', chg:-0.1, src:'ICE · 6/26',
-      spark:[99,99.5,100.1,100.6,101.0,101.4] },
+    { id:'vix',  label:'투자공포지수',  en:'VIX',           icon:'😨', val:'19.0', unit:'pt', chg:+0.6, src:'CBOE · 6/29', invert:true,
+      spark:[22,18,16.4,16.8,18.9,19.0] },
+    { id:'dxy',  label:'달러인덱스',    en:'Dollar Index',  icon:'💵', val:'101.2',unit:'pt', chg:-0.2, src:'ICE · 6/29',
+      spark:[99,99.5,100.1,100.6,101.0,101.2] },
     { id:'cpi',  label:'미 소비자물가', en:'US CPI YoY',    icon:'📈', val:'4.2', unit:'% YoY', chg:+0.4, src:'BLS · 5월(6/10)', invert:true,
       spark:[3.1,3.3,3.6,3.6,3.8,4.2] },
     { id:'emp',  label:'미 실업률',     en:'US Unemploy.',  icon:'👷', val:'4.3', unit:'%', chg:0.0, src:'BLS · 5월(6/5)', invert:true,
       spark:[4.0,4.1,4.2,4.3,4.3,4.3] },
-    { id:'risk', label:'위험선호',      en:'Risk Appetite', icon:'🧭', val:'Risk-off',unit:'우위', chg:-11.0, src:'Composite · 6/26',
+    { id:'risk', label:'위험선호',      en:'Risk Appetite', icon:'🧭', val:'Risk-off',unit:'우위', chg:-11.0, src:'Composite · 6/29',
       spark:[50,48,50,49,46,35] },
   ],
   // 히트맵: 지표 × 경제권. score 0~100(높을수록 강/양호), d=표시값(실측)
   matrix: [
     { metric:'대표지수', en:'Equity (당일)', fmt:'%',
-      cells:{ US:{d:'-0.1%',s:48}, CN:{d:'+1.2%',s:58}, EU:{d:'-0.7%',s:37}, JP:{d:'-4.2%',s:18}, KR:{d:'-5.8%',s:12} } },
+      cells:{ US:{d:'-0.1%',s:48}, CN:{d:'-0.6%',s:42}, EU:{d:'-0.9%',s:35}, JP:{d:'-4.2%',s:18}, KR:{d:'-5.8%',s:12} } },
     { metric:'소비자물가', en:'CPI YoY', fmt:'',
       cells:{ US:{d:'4.2%',s:35}, CN:{d:'1.2%',s:85}, EU:{d:'3.2%',s:50}, JP:{d:'1.5%',s:78}, KR:{d:'3.1%',s:52} } },
     { metric:'고용(실업률)', en:'Unemploy.', fmt:'',
       cells:{ US:{d:'4.3%',s:68}, CN:{d:'5.1%',s:55}, EU:{d:'6.3%',s:45}, JP:{d:'2.5%',s:92}, KR:{d:'2.8%',s:88} } },
     { metric:'환율(vs USD)', en:'FX spot', fmt:'',
-      cells:{ US:{d:'DXY 101.4',s:55}, CN:{d:'6.81',s:63}, EU:{d:'1.138',s:68}, JP:{d:'161.6',s:31}, KR:{d:'1,535',s:38} } },
+      cells:{ US:{d:'DXY 101.2',s:55}, CN:{d:'6.80',s:63}, EU:{d:'1.137',s:68}, JP:{d:'161.8',s:30}, KR:{d:'1,535',s:38} } },
     { metric:'정책금리', en:'Policy Rate', fmt:'',
       cells:{ US:{d:'3.75%',s:70}, CN:{d:'3.00%',s:62}, EU:{d:'2.25%',s:56}, JP:{d:'1.00%',s:40}, KR:{d:'2.50%',s:58} } },
   ],
-  // 대표지수: 월별 실측 종가 기반 정규화(기준=100, 1월말). 끝값 라벨=실제 현재 레벨(6/26)
-  // 6/26 글로벌 반도체·AI 수급 우려 재부각 — Nikkei -4.2%·KOSPI -5.8%·STOXX50 -0.7%, S&P500 보합
+  // 대표지수: 월별 실측 종가 기반 정규화(기준=100, 1월말). 끝값 라벨=실제 현재 레벨(6/29)
+  // 6/29 아시아 반등 탐색, CSI300 소폭 조정(-0.6%)·STOXX50 추가 하락(-0.9%). S&P500 6/26 보합 유지
   indices: {
     labels: MONTHS,
-    levels: { US:'7,354', CN:'4,777', EU:'6,222', JP:'69,361', KR:'8,411' },
+    levels: { US:'7,354', CN:'4,749', EU:'6,212', JP:'69,361', KR:'8,411' },
     series: {
-      US:[100,99.2,94.1,103.5,109.0,106.0], CN:[100,96.9,92.7,94.8,100.5,99.4],
-      EU:[100,101.9,98.1,105.6,112.0,115.2], JP:[100,101.8,109.4,102.9,113.3,119.8],
+      US:[100,99.2,94.1,103.5,109.0,106.0], CN:[100,96.9,92.7,94.8,100.5,98.8],
+      EU:[100,101.9,98.1,105.6,112.0,115.0], JP:[100,101.8,109.4,102.9,113.3,119.8],
       KR:[100,120.0,100.7,132.0,150.0,151.4],
     }
   },
-  // 환율: 월별 정규화(기준=100, 1월). 끝값 라벨=실제 현물(6/26)
-  // KRW·JPY·EUR 공개 고저/평균 기반, CNY 일부 추정. 지수 급락 여파 반영
+  // 환율: 월별 정규화(기준=100, 1월). 끝값 라벨=실제 현물(6/29)
+  // KRW·JPY·EUR 공개 고저/평균 기반, CNY 일부 추정. VIX 상승·달러 약세 소폭 반영
   fx: {
     labels: MONTHS,
-    levels: { 'USD/KRW':'1,535', 'USD/JPY':'161.6', 'USD/CNY':'6.81', 'EUR/USD':'1.138' },
+    levels: { 'USD/KRW':'1,535', 'USD/JPY':'161.8', 'USD/CNY':'6.80', 'EUR/USD':'1.137' },
     series: {
-      'USD/KRW':[100,99.3,104.1,102.1,102.8,105.9], 'USD/JPY':[100,99.4,102.6,101.9,103.2,104.9],
-      'USD/CNY':[100,99.3,100.7,98.6,97.2,96.7], 'EUR/USD':[100,99.2,96.2,97.5,97.9,95.1],
+      'USD/KRW':[100,99.3,104.1,102.1,102.8,105.9], 'USD/JPY':[100,99.4,102.6,101.9,103.2,105.0],
+      'USD/CNY':[100,99.3,100.7,98.6,97.2,96.6], 'EUR/USD':[100,99.2,96.2,97.5,97.9,95.0],
     }
   },
   // CPI YoY 실측 (최신 발표월)
@@ -411,16 +411,16 @@ const DATA = {
   emp: { US:4.3, CN:5.1, EU:6.3, JP:2.5, KR:2.8 },
   // 정책금리 실측
   rate:{ US:3.75, CN:3.00, EU:2.25, JP:1.00, KR:2.50 },
-  vix: 18.4,
+  vix: 19.0,
   // 투자 시그널 신호등 — 데이터 기반 종합 판단
   signals: {
-    US:{ light:'🟡', verdict:'중립',    vEn:'Neutral',    note:'S&P500 보합(7,354)·VIX 18.4 안정·WTI $68.9 급락(이란협상)·CPI 4.2% 고물가 지속' },
-    CN:{ light:'🟡', verdict:'중립',    vEn:'Neutral',    note:'저인플레(1.2%)·CSI300 반등(+1.2%)·위안 안정(6.81)·글로벌 시장 혼조 속 상대 강세' },
-    EU:{ light:'🟡', verdict:'중립',    vEn:'Neutral',    note:'STOXX50 -0.7%·ECB 2.25%로 인상(6/17)·물가 3.2%·반도체 여진' },
-    JP:{ light:'🟡', verdict:'중립',    vEn:'Neutral',    note:'Nikkei -4.2%(69,361)·반도체 재매도·BOJ 1.0% 유지·엔화 161.6' },
-    KR:{ light:'🟡', verdict:'중립',    vEn:'Neutral',    note:'KOSPI -5.8%(8,411)·반도체 재약세·회로차단기 경보·지정학 경계 지속' },
+    US:{ light:'🟡', verdict:'중립',    vEn:'Neutral',    note:'S&P500 보합(7,354·6/26)·VIX 19.0 소폭 상승·WTI $68.9 이란협상 압박·CPI 4.2% 고물가 지속' },
+    CN:{ light:'🟡', verdict:'중립',    vEn:'Neutral',    note:'저인플레(1.2%)·CSI300 소폭 조정(4,749·-0.6%)·위안 6.80 강세·글로벌 반도체 여진' },
+    EU:{ light:'🟡', verdict:'중립',    vEn:'Neutral',    note:'STOXX50 -0.9%(6,212·6/26)·ECB 2.25%로 인상(6/17)·물가 3.2%·반도체 재매도' },
+    JP:{ light:'🟡', verdict:'중립',    vEn:'Neutral',    note:'Nikkei 69,361(6/26 -4.2% 급락)·6/29 반등 탐색·BOJ 1.0% 유지·엔화 161.8' },
+    KR:{ light:'🟡', verdict:'중립',    vEn:'Neutral',    note:'KOSPI 8,411(6/26 -5.8% 급락)·6/29 반등 탐색·반도체 재약세·지정학 경계 지속' },
   },
-  // 자산 흐름 (% 자금흐름 강도) — 닛케이·KOSPI 급락으로 안전자산 선호 재강화
+  // 자산 흐름 (% 자금흐름 강도) — VIX 상승·달러 약세, 안전자산 선호 지속
   flow: { riskOn: 34, riskOff: 66,
     bars:[ {k:'주식 Equities', v:32, c:'var(--up)'}, {k:'채권 Bonds', v:62, c:'var(--down)'},
            {k:'금 Gold', v:72, c:'var(--warn)'}, {k:'달러 USD Cash', v:66, c:'var(--accent)'} ] }
