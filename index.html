@@ -213,7 +213,7 @@
     <div class="spacer"></div>
     <div class="updated">
       <div><span class="live-dot"></span><b>온디맨드 갱신 · 공신력 출처</b></div>
-      <div id="updated-time">데이터 기준: 2026-07-02 · 지표별 최신 발표 기준</div>
+      <div id="updated-time">데이터 기준: 2026-07-03 · 지표별 최신 발표 기준</div>
     </div>
     <button class="theme-toggle" id="themeBtn">🌙 <span id="themeLabel">다크</span></button>
   </header>
@@ -274,12 +274,12 @@
   <div class="grid g-2">
     <div class="card">
       <h3>대표지수 추이 (정규화, 기준=100, 1월말)</h3>
-      <div class="h-en">월별 실측 종가 기반(S&amp;P500·Nikkei·KOSPI), CN·EU 일부 추정 · 범례=현재 레벨(7/1)</div>
+      <div class="h-en">월별 실측 종가 기반(S&amp;P500·Nikkei·KOSPI), CN·EU 일부 추정 · 범례=현재 레벨(7/2)</div>
       <div class="canvas-box"><canvas id="idxChart"></canvas></div>
     </div>
     <div class="card">
       <h3>주요 환율 추이 (정규화, 기준=100, 1월)</h3>
-      <div class="h-en">월별 공개 고저·평균 기반(KRW·JPY·EUR), CNY 일부 추정 · 범례=현물(7/1)</div>
+      <div class="h-en">월별 공개 고저·평균 기반(KRW·JPY·EUR), CNY 일부 추정 · 범례=현물(7/2)</div>
       <div class="canvas-box"><canvas id="fxChart"></canvas></div>
     </div>
   </div>
@@ -329,12 +329,13 @@
   </div>
 
   <div class="footnote">
-    📊 <b>데이터 기준 2026-07-02</b> · 웹 조회 기반 온디맨드 갱신. 출처/기준월:
-    유가 EIA·NYMEX(7/1, $68.1) · VIX CBOE(7/1, 16.5) · DXY ICE(7/1, 101.4) ·
+    📊 <b>데이터 기준 2026-07-03</b> · 웹 조회 기반 온디맨드 갱신. 출처/기준월:
+    유가 EIA·NYMEX(7/2, $67.4) · VIX CBOE(7/2, 16.6) · DXY ICE(7/2, 101.6) ·
     CPI: 미 BLS 4.2%(5월,6/10)·중 NBS 1.2%(5월)·유로 Eurostat 2.8%(6월 속보치,7/1 발표·5월 3.2%에서 둔화)·일 총무성 1.5%(5월)·한 통계청 3.1%(5월) ·
-    실업률: 미 4.3%(5월·6월치는 7/2 발표 예정)·중 5.1%·유로 6.3%·일 2.5%·한 2.8% ·
+    실업률: 미 4.2%(6월,7/2 발표·5월 4.3%에서 개선)·중 5.1%·유로 6.3%·일 2.5%·한 2.8% ·
     정책금리: Fed 3.50–3.75%(유지)·PBoC LPR 3.0%(유지)·ECB 예금 2.25%(유지)·BOJ 1.0%(유지)·BOK 2.50%(유지) ·
-    지수/환율 현물(7/1): S&amp;P500 7,483(7/1·-0.2%)·Nikkei 70,475(7/1·+0.6%)·KOSPI 8,395(보합)·CSI300 5,031(7/1·+1.0%, 2021년 12월來 최고)·STOXX50 6,312(보합) / USD-KRW 1,558·USD-JPY 162.7·EUR-USD 1.140·USD-CNY 6.79.<br/>
+    지수/환율 현물(7/2): S&amp;P500 7,483(7/2·보합)·Nikkei 68,830(7/2·-2.3%, 반도체·AI 관련주 급락)·KOSPI 7,648(7/2·-7.9%, 삼성전자·SK하이닉스 투매)·CSI300 4,930(7/2·-2.0%, 상하이종합 동반 조정)·STOXX50 6,360(7/2·+1.2%) / USD-KRW 1,554·USD-JPY 161.1·EUR-USD 1.143·USD-CNY 6.79.<br/>
+    ⚠️ Meta의 AI 클라우드(잉여 컴퓨팅 판매) 사업 진출 발표를 계기로 AI 밸류에이션 우려가 확산, 美 반도체주(필라델피아 반도체지수 -6.3%) 급락이 아시아로 전이되며 KOSPI·Nikkei 조정.<br/>
     📈 지수·환율 6개월 추이선은 공개 월별 종가/고저·평균 기반(S&amp;P500·Nikkei·KOSPI 실측, CSI300·STOXX50·CNY 일부 추정), 끝점은 실제 현재값입니다. 투자 판단의 단독 근거로 사용하지 마세요. · Not investment advice.
   </div>
 </div>
@@ -356,50 +357,50 @@ const REGIONS = {
 };
 
 const DATA = {
-  // 글로벌 KPI 카드 — 2026-07-02 갱신 (VIX·DXY·WTI 7/1 종가·지수 7/1)
+  // 글로벌 KPI 카드 — 2026-07-03 갱신 (VIX·DXY·WTI 7/2 종가·지수 7/2, Meta발 반도체 급락 반영)
   kpi: [
-    { id:'wti',  label:'WTI 유가',     en:'Crude Oil',     icon:'🛢️', val:'68.1', unit:'USD/bbl', chg:-3.5, src:'EIA·NYMEX · 7/1',
-      spark:[76.5,74.1,70.7,69.7,70.6,68.1] },
-    { id:'vix',  label:'투자공포지수',  en:'VIX',           icon:'😨', val:'16.5', unit:'pt', chg:-5.7, src:'CBOE · 7/1', invert:true,
-      spark:[16.4,16.8,18.9,17.2,17.5,16.5] },
-    { id:'dxy',  label:'달러인덱스',    en:'Dollar Index',  icon:'💵', val:'101.4',unit:'pt', chg:+0.2, src:'ICE · 7/1',
-      spark:[100.1,100.6,101.0,101.1,101.2,101.4] },
+    { id:'wti',  label:'WTI 유가',     en:'Crude Oil',     icon:'🛢️', val:'67.4', unit:'USD/bbl', chg:-1.0, src:'EIA·NYMEX · 7/2',
+      spark:[74.1,70.7,69.7,70.6,68.1,67.4] },
+    { id:'vix',  label:'투자공포지수',  en:'VIX',           icon:'😨', val:'16.6', unit:'pt', chg:+0.6, src:'CBOE · 7/2', invert:true,
+      spark:[16.8,18.9,17.2,17.5,16.5,16.6] },
+    { id:'dxy',  label:'달러인덱스',    en:'Dollar Index',  icon:'💵', val:'101.6',unit:'pt', chg:+0.2, src:'ICE · 7/2',
+      spark:[100.6,101.0,101.1,101.2,101.4,101.6] },
     { id:'cpi',  label:'미 소비자물가', en:'US CPI YoY',    icon:'📈', val:'4.2', unit:'% YoY', chg:0.0, src:'BLS · 5월(6/10)', invert:true,
-      spark:[3.3,3.6,3.6,3.8,4.2,4.2] },
-    { id:'emp',  label:'미 실업률',     en:'US Unemploy.',  icon:'👷', val:'4.3', unit:'%', chg:0.0, src:'BLS · 5월(6/5)', invert:true,
-      spark:[4.1,4.2,4.3,4.3,4.3,4.3] },
-    { id:'risk', label:'위험선호',      en:'Risk Appetite', icon:'🧭', val:'Risk-off',unit:'우위', chg:-3.0, src:'Composite · 7/1',
-      spark:[50,49,46,36,39,36] },
+      spark:[3.6,3.6,3.8,4.2,4.2,4.2] },
+    { id:'emp',  label:'미 실업률',     en:'US Unemploy.',  icon:'👷', val:'4.2', unit:'%', chg:-0.1, src:'BLS · 6월(7/2)', invert:true,
+      spark:[4.2,4.3,4.3,4.3,4.3,4.2] },
+    { id:'risk', label:'위험선호',      en:'Risk Appetite', icon:'🧭', val:'Risk-off',unit:'우위', chg:-3.0, src:'Composite · 7/2',
+      spark:[49,46,36,39,36,33] },
   ],
   // 히트맵: 지표 × 경제권. score 0~100(높을수록 강/양호), d=표시값(실측)
   matrix: [
     { metric:'대표지수', en:'Equity (당일)', fmt:'%',
-      cells:{ US:{d:'-0.2%',s:52}, CN:{d:'+1.0%',s:63}, EU:{d:'0.0%',s:50}, JP:{d:'+0.6%',s:58}, KR:{d:'0.0%',s:50} } },
+      cells:{ US:{d:'0.0%',s:50}, CN:{d:'-2.0%',s:40}, EU:{d:'+1.2%',s:62}, JP:{d:'-2.3%',s:40}, KR:{d:'-7.9%',s:14} } },
     { metric:'소비자물가', en:'CPI YoY', fmt:'',
       cells:{ US:{d:'4.2%',s:35}, CN:{d:'1.2%',s:85}, EU:{d:'2.8%',s:58}, JP:{d:'1.5%',s:78}, KR:{d:'3.1%',s:52} } },
     { metric:'고용(실업률)', en:'Unemploy.', fmt:'',
-      cells:{ US:{d:'4.3%',s:68}, CN:{d:'5.1%',s:55}, EU:{d:'6.3%',s:45}, JP:{d:'2.5%',s:92}, KR:{d:'2.8%',s:88} } },
+      cells:{ US:{d:'4.2%',s:72}, CN:{d:'5.1%',s:55}, EU:{d:'6.3%',s:45}, JP:{d:'2.5%',s:92}, KR:{d:'2.8%',s:88} } },
     { metric:'환율(vs USD)', en:'FX spot', fmt:'',
-      cells:{ US:{d:'DXY 101.4',s:57}, CN:{d:'6.79',s:65}, EU:{d:'1.140',s:67}, JP:{d:'162.7',s:26}, KR:{d:'1,558',s:33} } },
+      cells:{ US:{d:'DXY 101.6',s:58}, CN:{d:'6.79',s:65}, EU:{d:'1.143',s:68}, JP:{d:'161.1',s:30}, KR:{d:'1,554',s:35} } },
     { metric:'정책금리', en:'Policy Rate', fmt:'',
       cells:{ US:{d:'3.75%',s:70}, CN:{d:'3.00%',s:62}, EU:{d:'2.25%',s:56}, JP:{d:'1.00%',s:40}, KR:{d:'2.50%',s:58} } },
   ],
-  // 대표지수: 월별 실측 종가 기반 정규화(기준=100, 1월말). 끝값 라벨=실제 현재 레벨(7/1)
-  // 7/1 CSI300 +1.0%(5,031·2021년 12월來 최고)·Nikkei +0.6%(70,475) 추가 상승. S&P500 -0.2%(7,483) 소폭 조정, STOXX50·KOSPI는 보합
+  // 대표지수: 월별 실측 종가 기반 정규화(기준=100, 1월말). 끝값 라벨=실제 현재 레벨(7/2)
+  // 7/2 Meta발 AI 밸류에이션 우려로 美 반도체주 급락(필라델피아 반도체지수 -6.3%) → 아시아 전이: KOSPI -7.9%(삼성전자·SK하이닉스 투매), Nikkei -2.3%. CSI300도 상하이종합 동반 -2.0% 조정. STOXX50은 +1.2% 상승, S&P500은 보합
   indices: {
     labels: MONTHS,
-    levels: { US:'7,483', CN:'5,031', EU:'6,312', JP:'70,475', KR:'8,395' },
+    levels: { US:'7,483', CN:'4,930', EU:'6,360', JP:'68,830', KR:'7,648' },
     series: {
       US:[99.2,94.1,103.5,109.0,108.1,107.9], CN:[96.9,92.7,94.8,100.5,103.5,104.6],
       EU:[101.9,98.1,105.6,112.0,116.9,116.9], JP:[101.8,109.4,102.9,113.3,121.0,121.7],
       KR:[120.0,100.7,132.0,150.0,151.1,151.1],
     }
   },
-  // 환율: 월별 정규화(기준=100, 1월). 끝값 라벨=실제 현물(7/1)
-  // KRW·JPY 약세 확대(1,558·162.7), CNY·EUR는 소폭 보합권
+  // 환율: 월별 정규화(기준=100, 1월). 끝값 라벨=실제 현물(7/2)
+  // 반도체 급락발 리스크오프로 JPY 안전자산 선호 강세 전환(161.1), KRW도 소폭 강세(1,554), EUR 강세(1.143), CNY는 보합권(6.79)
   fx: {
     labels: MONTHS,
-    levels: { 'USD/KRW':'1,558', 'USD/JPY':'162.7', 'USD/CNY':'6.79', 'EUR/USD':'1.140' },
+    levels: { 'USD/KRW':'1,554', 'USD/JPY':'161.1', 'USD/CNY':'6.79', 'EUR/USD':'1.143' },
     series: {
       'USD/KRW':[99.3,104.1,102.1,102.8,106.5,107.6], 'USD/JPY':[99.4,102.6,101.9,103.2,105.2,105.6],
       'USD/CNY':[99.3,100.7,98.6,97.2,96.3,96.4], 'EUR/USD':[99.2,96.2,97.5,97.9,95.5,95.2],
@@ -407,23 +408,23 @@ const DATA = {
   },
   // CPI YoY 실측 (최신 발표월) — 유로존 6월 속보치 2.8%로 둔화(5월 3.2%)
   cpi: { US:4.2, CN:1.2, EU:2.8, JP:1.5, KR:3.1 },
-  // 실업률 실측
-  emp: { US:4.3, CN:5.1, EU:6.3, JP:2.5, KR:2.8 },
+  // 실업률 실측 — 美 6월치 4.2%로 개선(7/2 발표, 5월 4.3%)
+  emp: { US:4.2, CN:5.1, EU:6.3, JP:2.5, KR:2.8 },
   // 정책금리 실측
   rate:{ US:3.75, CN:3.00, EU:2.25, JP:1.00, KR:2.50 },
-  vix: 16.5,
+  vix: 16.6,
   // 투자 시그널 신호등 — 데이터 기반 종합 판단
   signals: {
-    US:{ light:'🟡', verdict:'중립',    vEn:'Neutral',    note:'S&P500 소폭 조정(7,483·7/1·-0.2%)·VIX 16.5로 완화·WTI $68.1 하락·CPI 4.2% 고물가 지속' },
-    CN:{ light:'🟡', verdict:'중립',    vEn:'Neutral',    note:'CSI300 추가 상승(5,031·7/1·+1.0%, 2021년 12월來 최고)·저인플레(1.2%)·위안 6.79 안정·반도체 회복세' },
-    EU:{ light:'🟢', verdict:'긍정',    vEn:'Positive',   note:'STOXX50 보합(6,312·7/1)·유로존 CPI 2.8%로 둔화(6월 속보치, 5월 3.2%↓)·ECB 2.25% 유지·유로 1.140 안정' },
-    JP:{ light:'🟡', verdict:'중립',    vEn:'Neutral',    note:'Nikkei 추가 상승(70,475·7/1·+0.6%)·BOJ 1.0% 유지·엔화 162.7 약세 확대(1986년래 최저권)·기술주 견인' },
-    KR:{ light:'🟡', verdict:'중립',    vEn:'Neutral',    note:'KOSPI 보합(8,395)·반도체 관망세·USD/KRW 1,558 원화 약세 확대·지정학 경계 지속' },
+    US:{ light:'🟡', verdict:'중립',    vEn:'Neutral',    note:'S&P500 보합(7,483·7/2)·나스닥100 반도체주 약세로 장중 -2%·VIX 16.6 소폭 상승·실업률 4.2%로 개선(6월,7/2 발표)' },
+    CN:{ light:'🟡', verdict:'중립',    vEn:'Neutral',    note:'CSI300 되돌림(약 4,930·7/2·-2.0%, 상하이종합 동반 -2.0%)·美 반도체 급락 여파·저인플레(1.2%)·위안 6.79 안정' },
+    EU:{ light:'🟢', verdict:'긍정',    vEn:'Positive',   note:'STOXX50 상승(6,360·7/2·+1.2%)·유로존 CPI 2.8%로 둔화 지속·ECB 2.25% 유지·유로 1.143로 강세' },
+    JP:{ light:'🟡', verdict:'중립',    vEn:'Neutral',    note:'Nikkei 조정(68,830·7/2·-2.3%, 반도체·AI 관련주 급락)·BOJ 1.0% 유지·엔화 161.1로 강세 전환(안전자산 선호)' },
+    KR:{ light:'🔴', verdict:'주의',    vEn:'Caution',    note:'KOSPI 급락(7,648·7/2·-7.9%, 삼성전자·SK하이닉스 반도체 투매)·Meta 클라우드 진출발 AI 밸류에이션 우려 확산·USD/KRW 1,554' },
   },
-  // 자산 흐름 (% 자금흐름 강도) — VIX 완화로 위험선호 소폭 개선, 달러 강세는 유지
-  flow: { riskOn: 42, riskOff: 58,
-    bars:[ {k:'주식 Equities', v:42, c:'var(--up)'}, {k:'채권 Bonds', v:57, c:'var(--down)'},
-           {k:'금 Gold', v:65, c:'var(--warn)'}, {k:'달러 USD Cash', v:62, c:'var(--accent)'} ] }
+  // 자산 흐름 (% 자금흐름 강도) — 반도체 급락발 리스크오프 심화, 채권·금·달러로 자금 이동
+  flow: { riskOn: 38, riskOff: 62,
+    bars:[ {k:'주식 Equities', v:38, c:'var(--up)'}, {k:'채권 Bonds', v:60, c:'var(--down)'},
+           {k:'금 Gold', v:68, c:'var(--warn)'}, {k:'달러 USD Cash', v:64, c:'var(--accent)'} ] }
 };
 
 /* ===================== THEME ===================== */
